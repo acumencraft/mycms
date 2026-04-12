@@ -38,6 +38,15 @@ class ManageSettings extends Page implements HasForms
             ->schema([
                 Section::make('General')
                     ->schema([
+                        Forms\Components\FileUpload::make('site_logo')
+                            ->label('Site Logo')
+                            ->image()
+                            ->disk('public')
+                            ->directory('logo')
+                            ->imageResizeMode('contain')
+                            ->imageResizeTargetHeight('80')
+                            ->helperText('Header და Footer-ში გამოჩნდება. სიმაღლე: 40px')
+                            ->columnSpanFull(),
                         Forms\Components\TextInput::make('site_name')
                             ->label('Site Name')->maxLength(255),
                         Forms\Components\TextInput::make('site_url')
@@ -83,11 +92,7 @@ class ManageSettings extends Page implements HasForms
                             ->placeholder('221 83% 53%')
                             ->helperText('HSL format: H S% L% — მაგ: 221 83% 53% (ლურჯი), 142 76% 36% (მწვანე), 0 84% 60% (წითელი)')
                             ->suffixIcon('heroicon-o-swatch'),
-                        Forms\Components\Toggle::make('dark_mode')
-                            ->label('Dark Mode')
-                            ->helperText('Enable dark mode')
-                            ->onColor('success')
-                            ->offColor('gray'),
+
                     ])->columns(2),
 
                 Section::make('Social Media')

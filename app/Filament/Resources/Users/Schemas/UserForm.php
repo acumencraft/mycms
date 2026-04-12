@@ -43,7 +43,6 @@ class UserForm
                             ->preload()
                             ->native(false),
                     ]),
-
                 Section::make('Email Verification')
                     ->columns(2)
                     ->schema([
@@ -68,7 +67,6 @@ class UserForm
                                 }),
                         ]),
                     ]),
-
                 Section::make('Password')
                     ->schema([
                         TextInput::make('password')

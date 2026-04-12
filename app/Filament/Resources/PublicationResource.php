@@ -39,7 +39,6 @@ class PublicationResource extends Resource
                     Forms\Components\DateTimePicker::make('published_at'),
                     Forms\Components\Toggle::make('is_published')->default(false),
                 ])->columns(2),
-
             Section::make('Categories & Tags')
                 ->columnSpanFull()
                 ->schema([
@@ -50,21 +49,18 @@ class PublicationResource extends Resource
                         ->relationship('tags', 'name')
                         ->multiple()->preload(),
                 ])->columns(2),
-
             Section::make('Cover Image')
                 ->columnSpanFull()
                 ->schema([
                     Forms\Components\FileUpload::make('cover_image')
                         ->image()->disk('public')->directory('publications'),
                 ])->columns(2),
-
             Section::make('Excerpt')
                 ->columnSpanFull()
                 ->schema([
                     Forms\Components\Textarea::make('excerpt')
-                        ->rows(3)->maxLength(500)->columnSpanFull(),
+                        ->rows(3)->maxLength(500)->columnSpanFull()
                 ]),
-
             Section::make('Content')
                 ->columnSpanFull()
                 ->schema([
@@ -78,7 +74,7 @@ class PublicationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('cover_image')->height(40)->width(60),
+                Tables\Columns\ImageColumn::make('cover_image')->disk('public')->height(40)->width(60),
                 Tables\Columns\TextColumn::make('title')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('status')->badge()
                     ->color(fn(string $state) => match($state) {

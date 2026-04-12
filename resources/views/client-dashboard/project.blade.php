@@ -57,6 +57,114 @@
         </div>
         @endif
 
+        {{-- Order Details --}}
+        @if($project->order)
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Details</h2>
+          <dl class="grid grid-cols-2 gap-4">
+
+            @if($project->order->domain)
+            <div>
+              <dt class="text-xs text-gray-400 uppercase tracking-wide mb-1">Domain</dt>
+              <dd class="text-sm font-medium text-gray-900">{{ $project->order->domain }}</dd>
+            </div>
+            @endif
+
+            @if($project->order->website_type)
+            <div>
+              <dt class="text-xs text-gray-400 uppercase tracking-wide mb-1">Website Type</dt>
+              <dd class="text-sm text-gray-900">{{ ucfirst(str_replace('-', ' ', $project->order->website_type)) }}</dd>
+            </div>
+            @endif
+
+            @if($project->order->timeline)
+            <div>
+              <dt class="text-xs text-gray-400 uppercase tracking-wide mb-1">Timeline</dt>
+              <dd class="text-sm text-gray-900">{{ ucfirst(str_replace('-', ' ', $project->order->timeline)) }}</dd>
+            </div>
+            @endif
+
+            @if($project->order->budget_range)
+            <div>
+              <dt class="text-xs text-gray-400 uppercase tracking-wide mb-1">Budget Range</dt>
+              <dd class="text-sm text-gray-900">{{ str_replace('-', ' ', $project->order->budget_range) }}</dd>
+            </div>
+            @endif
+
+            @if($project->order->price_estimate)
+            <div>
+              <dt class="text-xs text-gray-400 uppercase tracking-wide mb-1">Estimated Total</dt>
+              <dd class="text-sm font-bold text-gray-900">${{ number_format($project->order->price_estimate, 2) }}</dd>
+            </div>
+            @endif
+
+            @if($project->order->payment_status)
+            <div>
+              <dt class="text-xs text-gray-400 uppercase tracking-wide mb-1">Payment</dt>
+              <dd>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
+                  {{ $project->order->payment_status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                  {{ ucfirst($project->order->payment_status) }}
+                </span>
+              </dd>
+            </div>
+            @endif
+
+          </dl>
+
+          @if($project->order->services->count() > 0)
+          <div class="mt-4 pt-4 border-t border-gray-100">
+            <dt class="text-xs text-gray-400 uppercase tracking-wide mb-2">Services</dt>
+            <div class="flex flex-wrap gap-2">
+              @foreach($project->order->services as $service)
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                  {{ $service->name }}
+                </span>
+              @endforeach
+            </div>
+          </div>
+          @endif
+
+          @if($project->order->features->count() > 0)
+          <div class="mt-4 pt-4 border-t border-gray-100">
+            <dt class="text-xs text-gray-400 uppercase tracking-wide mb-2">Features</dt>
+            <div class="flex flex-wrap gap-2">
+              @foreach($project->order->features as $feature)
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                  {{ $feature->name }}
+                </span>
+              @endforeach
+            </div>
+          </div>
+          @endif
+
+          @if($project->order->project_description)
+          <div class="mt-4 pt-4 border-t border-gray-100">
+            <dt class="text-xs text-gray-400 uppercase tracking-wide mb-2">Project Description</dt>
+            <p class="text-sm text-gray-600 leading-relaxed">{{ $project->order->project_description }}</p>
+          </div>
+          @endif
+
+          @if($project->order->additional_requirements)
+          <div class="mt-4 pt-4 border-t border-gray-100">
+            <dt class="text-xs text-gray-400 uppercase tracking-wide mb-2">Additional Requirements</dt>
+            <p class="text-sm text-gray-600 leading-relaxed">{{ $project->order->additional_requirements }}</p>
+          </div>
+          @endif
+
+          {{-- Pay button if unpaid --}}
+          @if($project->order->payment_status === 'unpaid')
+          <div class="mt-4 pt-4 border-t border-gray-100">
+            <a href="{{ route('payment.create', $project->order->id) }}"
+               class="inline-flex items-center gap-2 rounded-md bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium h-9 px-4">
+              💳 Complete Payment — ${{ number_format($project->order->price_estimate, 2) }}
+            </a>
+          </div>
+          @endif
+
+        </div>
+        @endif
+
         {{-- Messages --}}
         <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
           <h2 class="text-lg font-semibold text-gray-900 mb-6">Messages</h2>

@@ -60,7 +60,9 @@ class ClientDashboardController extends Controller
     public function project($id)
     {
         $client = $this->getOrCreateClient();
-        $project = $client->projects()->findOrFail($id);
+        $project = $client->projects()
+            ->with(['order.services', 'order.features'])
+            ->findOrFail($id);
         $messages = $project->messages()->with('sender')->orderBy('created_at')->get();
         $files = $project->files()->orderBy('created_at', 'desc')->get();
         return view('client-dashboard.project', compact('project', 'messages', 'files'));

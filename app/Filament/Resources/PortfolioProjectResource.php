@@ -55,7 +55,6 @@ class PortfolioProjectResource extends Resource
                         ->url()
                         ->maxLength(255),
                 ])->columns(2),
-
             Section::make('Cover Image')
                 ->columnSpanFull()
                 ->schema([
@@ -69,7 +68,6 @@ class PortfolioProjectResource extends Resource
                         ->imageResizeTargetHeight('675')
                         ->columnSpanFull(),
                 ]),
-
             Section::make('Description & Technologies')
                 ->columnSpanFull()
                 ->schema([
@@ -80,7 +78,6 @@ class PortfolioProjectResource extends Resource
                         ->placeholder('Laravel, Vue.js, MySQL...')
                         ->columnSpanFull(),
                 ]),
-
             Section::make('Visibility')
                 ->columnSpanFull()
                 ->schema([
@@ -109,10 +106,12 @@ class PortfolioProjectResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('project_type')
                     ->badge()
-                    ->color('gray'),
+                    ->color('gray')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('completed_at')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('is_featured')->boolean(),
                 Tables\Columns\IconColumn::make('is_published')->boolean(),
             ])

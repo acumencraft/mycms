@@ -38,7 +38,6 @@ class GuideResource extends Resource
                         ->required()->searchable()->preload(),
                     Forms\Components\DateTimePicker::make('published_at'),
                 ])->columns(2),
-
             Section::make('Media')
                 ->columnSpanFull()
                 ->schema([
@@ -49,7 +48,6 @@ class GuideResource extends Resource
                         ->label('Cover Image')->image()
                         ->disk('public')->directory('guides'),
                 ])->columns(2),
-
             Section::make('Content')
                 ->columnSpanFull()
                 ->schema([

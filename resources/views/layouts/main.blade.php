@@ -41,6 +41,11 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <a href="{{ route('home') }}" class="text-2xl font-bold text-primary">
+                    @if(data_get($siteSettings, 'site_logo'))
+                        <img src="{{ asset('storage/' . data_get($siteSettings, 'site_logo')) }}"
+                             alt="{{ data_get($siteSettings, 'site_name', 'archvadze') }}"
+                             class="h-8 w-auto object-contain inline-block align-middle mr-1">
+                    @endif
                     {{ data_get($siteSettings, 'site_name', 'archvadze') }}
                 </a>
 
@@ -154,6 +159,11 @@
                 {{-- Brand + Newsletter --}}
                 <div>
                     <span class="text-2xl font-bold text-white mb-3 block">
+                        @if(data_get($siteSettings, 'site_logo'))
+                            <img src="{{ asset('storage/' . data_get($siteSettings, 'site_logo')) }}"
+                                 alt="{{ data_get($siteSettings, 'site_name', 'archvadze') }}"
+                                 class="h-8 w-auto object-contain inline-block align-middle mr-1">
+                        @endif
                         {{ data_get($siteSettings, 'site_name', 'archvadze') }}
                     </span>
                     <p class="text-sm leading-relaxed text-gray-400 mb-4">
@@ -257,6 +267,14 @@
 
 
     {{-- Head Scripts (Google Search Console, Bing, etc.) --}}
+    @if(data_get($siteSettings, 'color_primary'))
+    <style>
+        :root {
+            --primary: {{ data_get($siteSettings, 'color_primary') }};
+            --ring: {{ data_get($siteSettings, 'color_primary') }};
+        }
+    </style>
+    @endif
     @if(data_get($siteSettings, 'head_scripts'))
     {!! data_get($siteSettings, 'head_scripts') !!}
     @endif

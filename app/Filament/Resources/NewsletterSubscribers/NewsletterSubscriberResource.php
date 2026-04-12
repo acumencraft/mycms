@@ -64,7 +64,8 @@ class NewsletterSubscriberResource extends Resource
                 TextColumn::make('created_at')
                     ->label('Subscribed')
                     ->dateTime('d M Y')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([

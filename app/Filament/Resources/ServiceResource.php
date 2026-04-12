@@ -38,9 +38,8 @@ class ServiceResource extends Resource
                     Forms\Components\Toggle::make('status')->default(true),
                     Forms\Components\Toggle::make('is_active')->default(true),
                     Forms\Components\Textarea::make('description')
-                        ->rows(3)->columnSpanFull(),
+                        ->rows(3)->columnSpanFull()
                 ])->columns(2),
-
             Section::make('Service Image')
                 ->columnSpanFull()
                 ->schema([

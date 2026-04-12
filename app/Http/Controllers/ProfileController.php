@@ -20,7 +20,21 @@ class ProfileController extends Controller
 
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $data = $request->validated();
+
+        // tags გავფილტროთ
+        if (isset($data['tags'])) {
+            $data['tags'] = array_values(array_filter(array_map('trim', $data['tags'])));
+        }
+
+        // User fields
+        $request->user()->fill([
+            'name'   => $data['name'],
+            'email'  => $data['email'],
+            'avatar' => $data['avatar'] ?? $request->user()->avatar,
+            'bio'    => $data['bio'] ?? null,
+            'tags'   => $data['tags'] ?? [],
+        ]);
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
@@ -28,23 +42,26 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        // Phone განახლება client record-ში
-        if ($request->filled('phone')) {
-            $client = $request->user()->client;
-            if ($client) {
-                $client->update([
-                    'phone' => $request->phone,
-                    'name'  => $request->name,
-                    'email' => $request->email,
-                ]);
-            } else {
-                Client::create([
-                    'user_id' => $request->user()->id,
-                    'name'    => $request->name,
-                    'email'   => $request->email,
-                    'phone'   => $request->phone,
-                ]);
-            }
+        // Client fields
+        $clientData = [
+            'name'            => $data['name'],
+            'email'           => $data['email'],
+            'phone'           => $data['phone'] ?? null,
+            'company'         => $data['company'] ?? null,
+            'country'         => $data['country'] ?? null,
+            'website'         => $data['website'] ?? null,
+            'industry'        => $data['industry'] ?? null,
+            'social_linkedin' => $data['social_linkedin'] ?? null,
+            'social_facebook' => $data['social_facebook'] ?? null,
+            'timezone'        => $data['timezone'] ?? null,
+            'birthday'        => $data['birthday'] ?? null,
+        ];
+
+        $client = $request->user()->client;
+        if ($client) {
+            $client->update($clientData);
+        } else {
+            Client::create(array_merge($clientData, ['user_id' => $request->user()->id]));
         }
 
         return Redirect::route('client-dashboard.profile')->with('status', 'profile-updated');

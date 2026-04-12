@@ -13,27 +13,23 @@ use Filament\Models\Contracts\FilamentUser;
 
 class User extends Authenticatable implements FilamentUser
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasRoles, LogsActivity;
 
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'status',
-        'email_verified_at',
+        'name', 'email', 'password', 'status',
+        'email_verified_at', 'avatar', 'tags',
     ];
 
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
 
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
+            'tags'              => 'array',
         ];
     }
 
@@ -44,6 +40,19 @@ class User extends Authenticatable implements FilamentUser
             ->logOnlyDirty()
             ->dontLogEmptyChanges()
             ->setDescriptionForEvent(fn(string $eventName) => "User {$this->email} was {$eventName}");
+    }
+
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->avatar) {
+            return asset('avatars/' . $this->avatar);
+        }
+        return asset('avatars/default.svg');
+    }
+
+    public function getMemberSinceAttribute(): string
+    {
+        return $this->created_at->format('Y');
     }
 
     public function client(): HasOne
@@ -57,18 +66,7 @@ class User extends Authenticatable implements FilamentUser
             && $this->status === 'active';
     }
 
-    public function isActive(): bool
-    {
-        return $this->status === 'active';
-    }
-
-    public function isBlocked(): bool
-    {
-        return $this->status === 'blocked';
-    }
-
-    public function isPending(): bool
-    {
-        return $this->status === 'pending';
-    }
+    public function isActive(): bool { return $this->status === 'active'; }
+    public function isBlocked(): bool { return $this->status === 'blocked'; }
+    public function isPending(): bool { return $this->status === 'pending'; }
 }

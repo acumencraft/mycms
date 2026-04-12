@@ -44,7 +44,6 @@ class PageResource extends Resource
                         ->default('published')
                         ->required(),
                 ])->columns(3),
-
             Section::make('SEO')
                 ->columnSpanFull()
                 ->schema([
@@ -68,7 +67,6 @@ class PageResource extends Resource
                         Forms\Components\Textarea::make('contact_address')
                             ->label('Address')->rows(2)->maxLength(500),
                     ])->columns(2),
-
                 Section::make('Google Maps')
                     ->columnSpanFull()
                     ->schema([
@@ -76,9 +74,8 @@ class PageResource extends Resource
                             ->label('Google Maps Embed Code')
                             ->rows(4)
                             ->placeholder('<iframe src="https://www.google.com/maps/embed?..." ...></iframe>')
-                            ->helperText('Google Maps → Share → Embed a map → კოდი აქ ჩასვი'),
+                            ->helperText('Google Maps → Share → Embed a map → კოდი აქ ჩასვი')
                     ]),
-
                 Section::make('Page Content')
                     ->columnSpanFull()
                     ->schema([
@@ -95,7 +92,6 @@ class PageResource extends Resource
                     Forms\Components\RichEditor::make('content')
                         ->required(),
                 ]),
-
             Section::make('Hero Section')
                 ->columnSpanFull()
                 ->schema([
@@ -120,7 +116,8 @@ class PageResource extends Resource
                         'draft' => 'warning',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable(),
+                Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
                 Actions\EditAction::make(),

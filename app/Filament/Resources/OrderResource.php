@@ -33,7 +33,6 @@ class OrderResource extends Resource
                         ->relationship('client', 'name')
                         ->searchable()->preload(),
                 ])->columns(2),
-
             Section::make('Order Details')
                 ->columnSpanFull()
                 ->schema([
@@ -49,11 +48,11 @@ class OrderResource extends Resource
                         ])->required(),
                     Forms\Components\Select::make('timeline')
                         ->options([
-                            'asap'        => 'ASAP',
-                            '1-month'     => '1 Month',
-                            '2-3-months'  => '2-3 Months',
-                            '3-6-months'  => '3-6 Months',
-                            'flexible'    => 'Flexible',
+                            'asap'       => 'ASAP',
+                            '1-month'    => '1 Month',
+                            '2-3-months' => '2-3 Months',
+                            '3-6-months' => '3-6 Months',
+                            'flexible'   => 'Flexible',
                         ]),
                     Forms\Components\Select::make('budget_range')
                         ->options([
@@ -75,14 +74,12 @@ class OrderResource extends Resource
                     Forms\Components\TextInput::make('price_estimate')
                         ->numeric()->prefix('$')->label('Estimated Total'),
                 ])->columns(2),
-
             Section::make('Project Description')
                 ->columnSpanFull()
                 ->schema([
                     Forms\Components\Textarea::make('project_description')->rows(4)->columnSpanFull(),
                     Forms\Components\Textarea::make('additional_requirements')->rows(3)->columnSpanFull(),
                 ])->collapsed(),
-
             Section::make('Services & Features')
                 ->columnSpanFull()
                 ->schema([
@@ -101,7 +98,8 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('id')->label('#')->sortable()->width(60),
                 Tables\Columns\TextColumn::make('client_name')->label('Client')->searchable(),
                 Tables\Columns\TextColumn::make('domain')->searchable(),
-                Tables\Columns\TextColumn::make('price_estimate')->label('Estimate')->money('USD'),
+                Tables\Columns\TextColumn::make('price_estimate')->label('Estimate')->money('USD')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\SelectColumn::make('status')
                     ->options([
                         'pending'   => 'Pending',
@@ -109,7 +107,8 @@ class OrderResource extends Resource
                         'accepted'  => 'Accepted',
                         'rejected'  => 'Rejected',
                     ]),
-                Tables\Columns\TextColumn::make('created_at')->label('Date')->since()->sortable(),
+                Tables\Columns\TextColumn::make('created_at')->label('Date')->since()->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([

@@ -43,7 +43,8 @@ class ContactMessageResource extends Resource
                 Tables\Columns\TextColumn::make('email')->searchable(),
                 Tables\Columns\TextColumn::make('subject')->limit(40),
                 Tables\Columns\TextColumn::make('message')->limit(50),
-                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->since(),
+                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->since()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([

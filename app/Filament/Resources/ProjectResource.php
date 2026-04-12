@@ -57,7 +57,7 @@ class ProjectResource extends Resource
                 ->schema([
                     Forms\Components\Textarea::make('description')
                         ->rows(4)
-                        ->columnSpanFull(),
+                        ->columnSpanFull()
                 ]),
         ]);
     }
@@ -97,8 +97,11 @@ class ProjectResource extends Resource
     }
     public static function getRelations(): array
     {
-        return [];
+        return [
+            \App\Filament\Resources\ProjectResource\RelationManagers\MessagesRelationManager::class,
+        ];
     }
+
     public static function getPages(): array
     {
         return [

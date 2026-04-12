@@ -34,7 +34,7 @@ class FeatureResource extends Resource
                     Forms\Components\TextInput::make('price')
                         ->numeric()->prefix('$'),
                     Forms\Components\Textarea::make('description')
-                        ->rows(3)->columnSpanFull(),
+                        ->rows(3)->columnSpanFull()
                 ])->columns(2),
         ]);
     }
@@ -46,7 +46,8 @@ class FeatureResource extends Resource
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('icon')->badge()->color('gray'),
                 Tables\Columns\TextColumn::make('price')->money('USD'),
-                Tables\Columns\TextColumn::make('description')->limit(40),
+                Tables\Columns\TextColumn::make('description')->limit(40)
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
                 Actions\EditAction::make(),

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,12 +11,13 @@ class Client extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'name',
-        'email',
-        'phone',
-        'company',
-        'country',
+        'user_id', 'name', 'email', 'phone', 'company',
+        'country', 'website', 'status',
+        'social_linkedin', 'social_facebook', 'birthday',
+    ];
+
+    protected $casts = [
+        'birthday' => 'date',
     ];
 
     public function user(): BelongsTo

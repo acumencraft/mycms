@@ -39,7 +39,8 @@ class ActivityLogResource extends Resource
                     ->searchable(),
                 TextColumn::make('description')
                     ->label('Action')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('subject_type')
                     ->label('Model')
                     ->formatStateUsing(fn($state) => $state ? class_basename($state) : '-'),
@@ -53,7 +54,8 @@ class ActivityLogResource extends Resource
                 TextColumn::make('created_at')
                     ->label('Time')
                     ->dateTime('d M Y, H:i')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([])

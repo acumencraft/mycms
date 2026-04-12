@@ -47,6 +47,7 @@ class OrderObserver
         if (!$exists) {
             Project::create([
                 'client_id'   => $client->id,
+                'order_id'    => $order->id,
                 'title'       => ucfirst(str_replace('-', ' ', $order->website_type)) . ' — ' . $order->domain,
                 'description' => $order->project_description ?? 'Project created from order #' . $order->id,
                 'status'      => 'pending',

@@ -33,9 +33,8 @@ class TestimonialResource extends Resource
                         ->maxLength(255),
                     Forms\Components\Select::make('rating')
                         ->options([1=>'⭐',2=>'⭐⭐',3=>'⭐⭐⭐',4=>'⭐⭐⭐⭐',5=>'⭐⭐⭐⭐⭐'])
-                        ->default(5),
+                        ->default(5)
                 ])->columns(2),
-
             Section::make('Photo')
                 ->columnSpanFull()
                 ->schema([
@@ -45,7 +44,6 @@ class TestimonialResource extends Resource
                         ->directory('testimonials')
                         ->columnSpanFull(),
                 ]),
-
             Section::make('Testimonial')
                 ->columnSpanFull()
                 ->schema([
@@ -64,8 +62,10 @@ class TestimonialResource extends Resource
                 Tables\Columns\ImageColumn::make('photo')->circular()->height(40),
                 Tables\Columns\TextColumn::make('client_name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('company'),
-                Tables\Columns\TextColumn::make('testimonial_text')->limit(50),
-                Tables\Columns\TextColumn::make('rating')->badge()->color('warning'),
+                Tables\Columns\TextColumn::make('testimonial_text')->limit(50)
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('rating')->badge()->color('warning')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('is_featured')->boolean(),
                 Tables\Columns\IconColumn::make('is_published')->boolean(),
             ])

@@ -16,6 +16,8 @@ use App\Observers\OrderObserver;
 use App\Observers\PublicationObserver;
 use App\Observers\PortfolioProjectObserver;
 use App\Observers\GuideObserver;
+use App\Observers\ProjectObserver;
+use App\Models\Project;
 use App\Models\Guide;
 use App\Models\PortfolioProject;
 use Illuminate\Validation\Rules\Password;
@@ -33,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
         Publication::observe(PublicationObserver::class);
         PortfolioProject::observe(PortfolioProjectObserver::class);
         Guide::observe(GuideObserver::class);
+        Project::observe(ProjectObserver::class);
 
         Service::saved(fn() => Cache::forget('home.services'));
         Service::deleted(fn() => Cache::forget('home.services'));

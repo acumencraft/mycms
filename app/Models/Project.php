@@ -9,6 +9,7 @@ class Project extends Model
     use HasFactory;
     protected $fillable = [
         'client_id',
+        'order_id',
         'title',
         'description',
         'status',
@@ -20,6 +21,11 @@ class Project extends Model
         'deadline' => 'date',
         'progress' => 'integer',
     ];
+    public function order(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Order::class);
+    }
+
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
