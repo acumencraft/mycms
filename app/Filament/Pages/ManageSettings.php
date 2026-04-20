@@ -15,6 +15,11 @@ class ManageSettings extends Page implements HasForms
     use InteractsWithForms;
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-cog-6-tooth';
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasRole('Super Admin');
+    }
     protected static ?string $navigationLabel = 'Settings';
     protected static ?string $title = 'Site Settings';
     protected static ?int $navigationSort = 17;
@@ -95,6 +100,51 @@ class ManageSettings extends Page implements HasForms
 
                     ])->columns(2),
 
+                Section::make('Modules')
+                    ->description('Enable/disable sections and customize their display names')
+                    ->schema([
+                        Forms\Components\Toggle::make('module_portfolio')
+                            ->label('Portfolio')
+                            ->default(true)
+                            ->onColor('success'),
+                        Forms\Components\TextInput::make('module_portfolio_label')
+                            ->label('Portfolio Menu Label')
+                            ->placeholder('Portfolio')
+                            ->maxLength(50),
+                        Forms\Components\Toggle::make('module_services')
+                            ->label('Services')
+                            ->default(true)
+                            ->onColor('success'),
+                        Forms\Components\TextInput::make('module_services_label')
+                            ->label('Services Menu Label')
+                            ->placeholder('Services')
+                            ->maxLength(50),
+                        Forms\Components\Toggle::make('module_blog')
+                            ->label('Blog')
+                            ->default(true)
+                            ->onColor('success'),
+                        Forms\Components\TextInput::make('module_blog_label')
+                            ->label('Blog Menu Label')
+                            ->placeholder('Blog')
+                            ->maxLength(50),
+                        Forms\Components\Toggle::make('module_guides')
+                            ->label('Guides')
+                            ->default(true)
+                            ->onColor('success'),
+                        Forms\Components\TextInput::make('module_guides_label')
+                            ->label('Guides Menu Label')
+                            ->placeholder('Guides')
+                            ->maxLength(50),
+                        Forms\Components\Toggle::make('module_testimonials')
+                            ->label('Testimonials')
+                            ->default(true)
+                            ->onColor('success'),
+                        Forms\Components\TextInput::make('module_testimonials_label')
+                            ->label('Testimonials Menu Label')
+                            ->placeholder('Testimonials')
+                            ->maxLength(50),
+                    ])->columns(2)->collapsed(),
+
                 Section::make('Social Media')
                     ->schema([
                         Forms\Components\TextInput::make('social_facebook')
@@ -113,9 +163,33 @@ class ManageSettings extends Page implements HasForms
     public function save(): void
     {
         $data = $this->form->getState();
+
         foreach ($data as $key => $value) {
             SiteSetting::updateOrCreate(['key' => $key], ['value' => $value ?? '']);
         }
+
+        // Module toggles — MenuItem-ები განახლდეს
+        $moduleMap = [
+            'module_services'   => '/services',
+            'module_portfolio'  => '/portfolio',
+            'module_blog'       => '/blog',
+            'module_guides'     => '/guides',
+        ];
+
+        foreach ($moduleMap as $settingKey => $url) {
+            $isActive = !empty($data[$settingKey]);
+            \App\Models\MenuItem::where('url', $url)->update(['is_active' => $isActive]);
+
+            // Label განახლება
+            $labelKey = $settingKey . '_label';
+            if (!empty($data[$labelKey])) {
+                \App\Models\MenuItem::where('url', $url)->update(['label' => $data[$labelKey]]);
+            }
+        }
+
+        // Menu cache გავასუფთავოთ
+        \Illuminate\Support\Facades\Cache::forget('menu.items');
+
         Notification::make()->title('Settings saved!')->success()->send();
     }
 }

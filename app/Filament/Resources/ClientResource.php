@@ -15,10 +15,15 @@ use Filament\Tables\Table;
 class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
-    public static function getNavigationGroup(): ?string { return 'CRM'; }
+    public static function getNavigationGroup(): ?string { return 'Operations'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationLabel = 'Clients';
     protected static ?int $navigationSort = 1;
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole(['Super Admin', 'Admin']);
+    }
 
     private static function countries(): array
     {

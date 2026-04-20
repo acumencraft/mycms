@@ -15,9 +15,14 @@ use Filament\Tables\Table;
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
-    public static function getNavigationGroup(): ?string { return 'CRM'; }
+    public static function getNavigationGroup(): ?string { return 'Operations'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-shopping-bag';
     protected static ?int $navigationSort = 3;
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole(['Super Admin', 'Admin']);
+    }
     protected static ?string $navigationLabel = 'Orders';
 
     public static function form(Schema $schema): Schema

@@ -14,9 +14,14 @@ class ActivityLogResource extends Resource
     protected static ?string $navigationLabel = 'Activity Log';
     protected static ?int $navigationSort = 99;
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole(['Super Admin', 'Admin', 'Support']);
+    }
+
     public static function getNavigationGroup(): ?string
     {
-        return 'System';
+        return 'Operations';
     }
 
     public static function getNavigationIcon(): string|\BackedEnum|null

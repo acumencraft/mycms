@@ -19,6 +19,11 @@ class FaqResource extends Resource
     protected static ?string $navigationLabel = 'FAQ';
     protected static ?int $navigationSort = 11;
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole(['Super Admin', 'Support']);
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([

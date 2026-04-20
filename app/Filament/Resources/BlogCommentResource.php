@@ -19,6 +19,11 @@ class BlogCommentResource extends Resource
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
     protected static ?int $navigationSort = 10;
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole(['Super Admin', 'Support']);
+    }
+
     public static function getNavigationBadge(): ?string
     {
         $count = Comment::where('is_approved', false)->count();

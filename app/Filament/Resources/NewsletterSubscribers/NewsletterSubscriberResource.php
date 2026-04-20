@@ -24,9 +24,14 @@ class NewsletterSubscriberResource extends Resource
     protected static ?string $navigationLabel = 'Newsletter';
     protected static ?int $navigationSort = 10;
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole(['Super Admin', 'Editor']);
+    }
+
     public static function getNavigationGroup(): ?string
     {
-        return 'Marketing';
+        return 'Operations';
     }
 
     public static function getNavigationIcon(): string|\BackedEnum|null

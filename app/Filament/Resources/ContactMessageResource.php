@@ -14,10 +14,15 @@ use Filament\Tables\Table;
 class ContactMessageResource extends Resource
 {
     protected static ?string $model = ContactMessage::class;
-    public static function getNavigationGroup(): ?string { return 'CRM'; }
+    public static function getNavigationGroup(): ?string { return 'Operations'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
     protected static ?string $navigationLabel = 'Messages';
     protected static ?int $navigationSort = 2;
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole(['Super Admin', 'Admin', 'Support']);
+    }
 
     public static function form(Schema $schema): Schema
     {

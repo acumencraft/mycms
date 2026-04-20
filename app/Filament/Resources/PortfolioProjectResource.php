@@ -15,9 +15,14 @@ use Filament\Tables\Table;
 class PortfolioProjectResource extends Resource
 {
     protected static ?string $model = PortfolioProject::class;
-    public static function getNavigationGroup(): ?string { return 'Content'; }
+    public static function getNavigationGroup(): ?string { return 'Operations'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-photo';
     protected static ?int $navigationSort = 4;
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole(['Super Admin', 'Editor']);
+    }
     protected static ?string $navigationLabel = 'Portfolio';
 
     public static function form(Schema $schema): Schema

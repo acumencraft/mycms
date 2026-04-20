@@ -22,3 +22,4 @@ Thumbs.db
 # Laravel caches
 .phpunit.result.cache
 .php
+.aider*

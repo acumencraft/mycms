@@ -17,39 +17,43 @@ class RegisteredUserController extends Controller
     {
         return view('auth.register');
     }
-
     public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'phone'    => ['required', 'string', 'max:20'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+{
+    $request->validate([
+        'name'     => ['required', 'string', 'max:255'],
+        'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+        'phone'    => ['required', 'string', 'max:20'],
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+    ]);
 
-        $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+    $user = User::create([
+        'name'     => $request->name,
+        'email'    => $request->email,
+        'password' => Hash::make($request->password),
+    ]);
 
-        $user->assignRole('Client');
+    $user->assignRole('Client');
 
-        // Client record შექმნა phone-ით
-        Client::create([
-            'user_id' => $user->id,
-            'name'    => $request->name,
-            'email'   => $request->email,
-            'phone'   => $request->phone,
-        ]);
+    Client::create([
+        'user_id' => $user->id,
+        'name'    => $request->name,
+        'email'   => $request->email,
+        'phone'   => $request->phone,
+    ]);
 
-        event(new Registered($user));
-        Auth::login($user);
+    event(new Registered($user));
 
-        if ($request->has('redirect_to')) {
-            return redirect($request->redirect_to);
-        }
+    // Admin notification
+    \Illuminate\Support\Facades\Mail::to(config('agency.admin_email'))
+        ->send(new \App\Mail\NewUserAdminMail($user));
 
-        return redirect(route('dashboard', absolute: false));
+    Auth::login($user);
+
+    if ($request->has('redirect_to')) {
+        return redirect($request->redirect_to);
     }
+
+    return redirect(route('dashboard', absolute: false));
+}
+
 }

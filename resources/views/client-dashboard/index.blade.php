@@ -195,7 +195,69 @@
         </div>
 
       </div>
+</div>
+
+    {{-- Digital Purchases --}}
+    @if(isset($purchases) && $purchases->count())
+    <div class="mt-6 bg-white rounded-xl border border-gray-100 shadow-sm">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h2 class="text-base font-semibold text-gray-900">My Digital Purchases</h2>
+        <span class="text-xs text-gray-400">{{ $purchases->count() }} product(s)</span>
+      </div>
+      <div class="divide-y divide-gray-100">
+        @foreach($purchases as $purchase)
+        <div class="p-6 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            @if($purchase->version->product->image)
+              <img src="{{ asset('storage/'.$purchase->version->product->image) }}"
+                   class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
+            @else
+              <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+              </div>
+            @endif
+            <div>
+              <p class="font-medium text-gray-900">{{ $purchase->version->product->name }}</p>
+              <p class="text-sm text-gray-500">
+                v{{ $purchase->version->version_number }} •
+                ${{ number_format($purchase->amount, 2) }} •
+                {{ $purchase->created_at->format('M d, Y') }}
+              </p>
+              <p class="text-xs text-gray-400">
+                {{ $purchase->download_limit }} downloads remaining
+                @if($purchase->download_expires_at)
+                  • expires {{ $purchase->download_expires_at->format('M d, Y') }}
+                @endif
+              </p>
+              @if($purchase->license_key)
+              <p class="text-xs font-mono text-gray-500 mt-1">
+                🔑 {{ $purchase->license_key }}
+              </p>
+              @endif
+
+ </div>
+          </div>
+          @if($purchase->download_limit > 0)
+          <a href="{{ route('purchase.download', $purchase) }}"
+             class="flex-shrink-0 inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            Download
+          </a>
+          @else
+          <span class="text-sm text-gray-400 flex-shrink-0">Limit reached</span>
+          @endif
+        </div>
+        @endforeach
+      </div>
     </div>
+    @endif
+
   </div>
 </main>
 @endsection

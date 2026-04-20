@@ -66,7 +66,7 @@ class AppServiceProvider extends ServiceProvider
             });
 
             $menuItems = Cache::remember('menu.items', 3600, function () {
-                return MenuItem::all();
+                return MenuItem::where('is_active', true)->get();
             });
 
             $view->with('siteSettings', $siteSettings);

@@ -19,6 +19,11 @@ class GuideCategoryResource extends Resource
     protected static ?string $navigationLabel = 'Guide Categories';
     protected static ?int $navigationSort = 9;
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole(['Super Admin', 'Support']);
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([

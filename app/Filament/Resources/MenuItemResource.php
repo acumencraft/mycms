@@ -14,10 +14,15 @@ use Filament\Tables\Table;
 class MenuItemResource extends Resource
 {
     protected static ?string $model = MenuItem::class;
-    public static function getNavigationGroup(): ?string { return 'Website'; }
+    public static function getNavigationGroup(): ?string { return 'System'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-bars-3';
     protected static ?string $navigationLabel = 'Menu Items';
     protected static ?int $navigationSort = 14;
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole('Super Admin');
+    }
 
     public static function form(Schema $schema): Schema
     {

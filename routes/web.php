@@ -13,15 +13,22 @@ use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\PollController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/services', [ServiceController::class, 'index'])->name('services');
-Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio');
-Route::get('/blog', [PublicationController::class, 'index'])->name('blog');
-Route::get('/blog/{slug}', [PublicationController::class, 'show'])->name('blog.show');
-Route::get('/guides', [GuideController::class, 'index'])->name('guides');
-Route::get('/guides/{slug}', [GuideController::class, 'show'])->name('guides.show');
+Route::get('/services', [ServiceController::class, 'index'])->name('services')
+    ->middleware('module:module_services');
+Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio')
+    ->middleware('module:module_portfolio');
+Route::get('/blog', [PublicationController::class, 'index'])->name('blog')
+    ->middleware('module:module_blog');
+Route::get('/blog/{slug}', [PublicationController::class, 'show'])->name('blog.show')
+    ->middleware('module:module_blog');
+Route::get('/guides', [GuideController::class, 'index'])->name('guides')
+    ->middleware('module:module_guides');
+Route::get('/guides/{slug}', [GuideController::class, 'show'])->name('guides.show')
+    ->middleware('module:module_guides');
 Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/faq', [PageController::class, 'faq'])->name('faq');
@@ -78,6 +85,22 @@ Route::middleware('auth')->group(function () {
 Route::get('/auth/{provider}/redirect', [SocialAuthController::class, 'redirect'])->name('social.redirect');
 Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback'])->name('social.callback');
 
+// Shop
+Route::get('/shop', [App\Http\Controllers\ShopController::class, 'index'])->name('shop.index');
+Route::get('/shop/{slug}', [App\Http\Controllers\ShopController::class, 'show'])->name('shop.show');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/shop/{slug}/checkout', [App\Http\Controllers\ShopController::class, 'checkout'])->name('shop.checkout');
+    Route::get('/shop/{slug}/success', [App\Http\Controllers\ShopController::class, 'checkoutSuccess'])->name('shop.checkout.success');
+    Route::get('/shop/{slug}/cancel', [App\Http\Controllers\ShopController::class, 'checkoutCancel'])->name('shop.checkout.cancel');
+    Route::get('/purchase/{purchase}/download', [App\Http\Controllers\ShopController::class, 'download'])->name('purchase.download');
+});
+
 require __DIR__.'/auth.php';
 Route::get('/testimonials', [App\Http\Controllers\TestimonialController::class, 'index'])->name('testimonials');
 Route::post('/publications/{publication}/comments', [CommentController::class, 'store'])->name('comments.store');
+
+Route::prefix('polls')->name('polls.')->group(function () {
+    Route::get('/', [PollController::class, 'index'])->name('index');
+    Route::get('/{id}', [PollController::class, 'show'])->name('show');
+    Route::post('/{id}/vote', [PollController::class, 'vote'])->name('vote');
+});

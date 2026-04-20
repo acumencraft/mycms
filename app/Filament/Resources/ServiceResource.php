@@ -19,6 +19,11 @@ class ServiceResource extends Resource
     protected static ?string $navigationLabel = 'Services';
     protected static ?int $navigationSort = 6;
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole(['Super Admin', 'Editor']);
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([

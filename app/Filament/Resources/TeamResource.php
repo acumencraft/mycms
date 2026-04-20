@@ -14,10 +14,15 @@ use Filament\Tables\Table;
 class TeamResource extends Resource
 {
     protected static ?string $model = User::class;
-    public static function getNavigationGroup(): ?string { return 'CRM'; }
+    public static function getNavigationGroup(): ?string { return 'System'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-user-group';
     protected static ?string $navigationLabel = 'Team Members';
     protected static ?int $navigationSort = 2;
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole('Super Admin');
+    }
 
     // მხოლოდ team roles — Client გამოვრიცხოთ
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder

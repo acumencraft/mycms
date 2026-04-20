@@ -101,24 +101,13 @@
 
         <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
             <nav class="px-4 py-4 space-y-3">
-                <a href="{{ route('home') }}" class="block py-2 text-sm font-medium {{ request()->routeIs('home') ? 'text-primary' : 'text-gray-600' }}">
-                    Home
+                @foreach($headerMenuItems as $menuItem)
+                <a href="{{ $menuItem->url }}"
+                   target="{{ $menuItem->open_in_new_tab ? '_blank' : '_self' }}"
+                   class="block py-2 text-sm font-medium {{ request()->is(ltrim($menuItem->url, '/') ?: '/') ? 'text-primary' : 'text-gray-600' }}">
+                    {{ $menuItem->label }}
                 </a>
-                <a href="{{ route('services') }}" class="block py-2 text-sm font-medium {{ request()->routeIs('services') ? 'text-primary' : 'text-gray-600' }}">
-                    Services
-                </a>
-                <a href="{{ route('portfolio') }}" class="block py-2 text-sm font-medium {{ request()->routeIs('portfolio') ? 'text-primary' : 'text-gray-600' }}">
-                    Portfolio
-                </a>
-                <a href="{{ route('blog') }}" class="block py-2 text-sm font-medium {{ request()->routeIs('blog*') ? 'text-primary' : 'text-gray-600' }}">
-                    Blog
-                </a>
-                <a href="{{ route('guides') }}" class="block py-2 text-sm font-medium {{ request()->routeIs('guides*') ? 'text-primary' : 'text-gray-600' }}">
-                    Guides
-                </a>
-                <a href="{{ route('order.create') }}" class="block py-2 text-sm font-medium {{ request()->routeIs('order*') ? 'text-primary' : 'text-gray-600' }}">
-                    Order
-                </a>
+                @endforeach
                 <div class="pt-3 border-t border-gray-200 space-y-2">
                     @auth
                         @if(auth()->user()->hasRole('client'))

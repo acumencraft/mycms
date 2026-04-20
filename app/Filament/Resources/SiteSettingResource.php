@@ -14,9 +14,14 @@ use Filament\Tables\Table;
 class SiteSettingResource extends Resource
 {
     protected static ?string $model = SiteSetting::class;
-    public static function getNavigationGroup(): ?string { return 'Website'; }
+    public static function getNavigationGroup(): ?string { return 'System'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-cog';
     protected static ?int $navigationSort = 16;
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole('Super Admin');
+    }
     protected static ?string $navigationLabel = 'Site Settings';
 
     public static function form(Schema $schema): Schema

@@ -15,9 +15,14 @@ use Filament\Schemas\Components\Section;
 class PageResource extends Resource
 {
     protected static ?string $model = Page::class;
-    public static function getNavigationGroup(): ?string { return 'Website'; }
+    public static function getNavigationGroup(): ?string { return 'System'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-document-text';
     protected static ?int $navigationSort = 15;
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole('Super Admin');
+    }
     protected static ?string $navigationLabel = 'Pages';
 
     public static function form(Schema $schema): Schema

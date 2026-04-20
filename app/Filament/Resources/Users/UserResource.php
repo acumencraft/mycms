@@ -17,6 +17,27 @@ class UserResource extends Resource
     protected static ?string $navigationLabel = 'Users';
     protected static ?int $navigationSort = 1;
 
+    public static function canViewAny(): bool
+    {
+        // Super Admin და Admin სრული წვდომა, Support მხოლოდ კითხვა
+        return auth()->user()?->hasRole(['Super Admin', 'Support']);
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->hasRole(['Super Admin', 'Admin']);
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()?->hasRole(['Super Admin', 'Admin']);
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()?->hasRole(['Super Admin']);
+    }
+
     public static function getNavigationGroup(): ?string
     {
         return 'System';

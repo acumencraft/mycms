@@ -27,35 +27,37 @@ class ClientDashboardController extends Controller
         return $client;
     }
 
-    public function index()
-    {
-        $client = $this->getOrCreateClient();
+public function index()
+{
+    $client = $this->getOrCreateClient();
+    $projects = $client->projects()
+        ->with(['messages' => fn($q) => $q->latest()->limit(3)])
+        ->latest()
+        ->get();
 
-        $projects = $client->projects()
-            ->with(['messages' => fn($q) => $q->latest()->limit(3)])
-            ->latest()
-            ->get();
+    $orders = $client->orders()->latest()->take(5)->get();
 
-        // orders ერთხელ ჩავტვირთოთ — collection-ს ვიყენებთ ქვემოთაც
-        $orders = $client->orders()->latest()->take(5)->get();
+    $recentMessages = ProjectMessage::whereIn('project_id', $projects->pluck('id'))
+        ->where('sender_id', '!=', Auth::id())
+        ->with('project')
+        ->orderBy('created_at', 'desc')
+        ->take(5)
+        ->get();
 
-        $recentMessages = ProjectMessage::whereIn('project_id', $projects->pluck('id'))
-            ->where('sender_id', '!=', Auth::id())
-            ->with('project')
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
+    $stats = [
+        'total_projects'     => $projects->count(),
+        'active_projects'    => $projects->where('status', 'in_progress')->count(),
+        'completed_projects' => $projects->where('status', 'completed')->count(),
+        'total_orders'       => $orders->count(),
+    ];
 
-        // ყველა stat collection-იდან — არცერთი ზედმეტი DB query
-        $stats = [
-            'total_projects'     => $projects->count(),
-            'active_projects'    => $projects->where('status', 'in_progress')->count(),
-            'completed_projects' => $projects->where('status', 'completed')->count(),
-            'total_orders'       => $orders->count(), // იყო: $client->orders()->count() — ზედმეტი query
-        ];
+    $purchases = \App\Models\Purchase::where('user_id', auth()->id())
+        ->with(['version.product'])
+        ->latest()
+        ->get();
 
-        return view('client-dashboard.index', compact('projects', 'orders', 'recentMessages', 'stats'));
-    }
+    return view('client-dashboard.index', compact('projects', 'orders', 'recentMessages', 'stats', 'purchases'));
+}
 
     public function project($id)
     {
