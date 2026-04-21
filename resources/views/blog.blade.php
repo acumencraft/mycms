@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
-@section('title', optional($page)->seo_title ?? 'Blog - ' . config('agency.seo.title_suffix') . '')
-@section('description', optional($page)->seo_description ?? 'Latest articles and insights from ' . config('agency.seo.title_suffix') . '')
+@section('title', optional($page)->seo_title ?? 'Blog - ' . config('agency.seo.title_suffix'))
+@section('description', optional($page)->seo_description ?? 'Latest articles and insights from ' . config('agency.seo.title_suffix'))
 
 @section('content')
 <main class="pt-24 pb-20">

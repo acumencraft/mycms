@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title', 'Edit Profile - ' . config('agency.seo.title_suffix') . '')
+@section('title', 'Edit Profile - ' . config('agency.seo.title_suffix'))
 
 @section('content')
 <main class="pt-24 pb-20 bg-gray-50 min-h-screen">

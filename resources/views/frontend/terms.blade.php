@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title', 'Terms of Service - ' . config('agency.seo.title_suffix') . '')
+@section('title', 'Terms of Service - ' . config('agency.seo.title_suffix'))
 
 @section('content')
 <main class="pt-24 pb-20">
@@ -15,7 +15,7 @@
       </div>
     @else
       <div class="prose prose-gray max-w-none space-y-6 text-gray-700">
-        <p>By accessing and using ' . config('agency.seo.title_suffix') . ''s services, you accept and agree to be bound by the terms and provisions of this agreement.</p>
+        <p>By accessing and using ' . config('agency.seo.title_suffix')s services, you accept and agree to be bound by the terms and provisions of this agreement.</p>
 
         <h2 class="text-xl font-bold text-gray-900">Services</h2>
         <p>{{ config('agency.name') }} provides web development, design, and digital marketing services. The scope of each project is defined in the individual project agreement or order confirmation.</p>

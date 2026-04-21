@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', $page?->seo_title ?? 'Contact Us - ' . config('agency.seo.title_suffix') . '')
+@section('title', $page?->seo_title ?? 'Contact Us - ' . config('agency.seo.title_suffix'))
 @section('description', $page?->seo_description ?? '')
 
 @section('content')

@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Start Your Project - ' . config('agency.seo.title_suffix') . '')
+@section('title', 'Start Your Project - ' . config('agency.seo.title_suffix'))
 
 @section('content')
 <main class="pt-24 pb-20">

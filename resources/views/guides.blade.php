@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', optional($page)->seo_title ?? 'Guides - ' . config('agency.seo.title_suffix') . '')
+@section('title', optional($page)->seo_title ?? 'Guides - ' . config('agency.seo.title_suffix'))
 @section('description', optional($page)->seo_description ?? 'Comprehensive guides for web development')
 
 @section('content')
