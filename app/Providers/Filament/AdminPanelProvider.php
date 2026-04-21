@@ -53,8 +53,9 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->authorize(fn () => auth()->check() && auth()->user()->hasAnyRole([
-                'Super Admin', 'Admin', 'Editor', 'Support'
-            ]));
+            ->authMiddleware([
+    Authenticate::class,
+    \App\Http\Middleware\AdminMiddleware::class,
+]);
     }
 }
