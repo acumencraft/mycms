@@ -15,7 +15,8 @@ git push origin main
 echo "→ Deploying on server..."
 ssh -i ~/.ssh/hostinger_archvadze -p 65002 u831949347@82.25.96.134 << 'ENDSSH'
 cd domains/archvadze.com
-git pull origin main
+git fetch origin
+git reset --hard origin/main
 composer install --no-dev --optimize-autoloader --no-interaction
 php artisan migrate --force
 php artisan optimize:clear
