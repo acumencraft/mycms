@@ -9,10 +9,21 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        if (!auth()->check() || !auth()->user()->hasAnyRole(['Super Admin', 'Admin', 'Editor', 'Support'])) {
-            abort(403);
+        if (!auth()->check()) {
+            abort(403, 'Not authenticated');
         }
 
-        return $next($request);
+        $user = auth()->user();
+        $roles = $user->getRoleNames()->toArray();
+        
+        $allowed = ['Super Admin', 'Admin', 'Editor', 'Support'];
+        
+        foreach ($allowed as $role) {
+            if (in_array($role, $roles)) {
+                return $next($request);
+            }
+        }
+
+        abort(403, 'No permission. Roles: ' . implode(', ', $roles));
     }
 }
