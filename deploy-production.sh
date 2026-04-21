@@ -28,7 +28,13 @@ echo "=== ✅ Deploy Complete ==="
 ENDSSH
 
 # 4. Copy built assets
+
 echo "→ Copying built assets..."
 scp -i ~/.ssh/hostinger_archvadze -P 65002 -r public/build u831949347@82.25.96.134:domains/archvadze.com/public_html/
+# Sync public folder to public_html
+echo "→ Syncing public to public_html..."
+ssh -i ~/.ssh/hostinger_archvadze -p 65002 u831949347@82.25.96.134 "cp -r domains/archvadze.com/public/* domains/archvadze.com/public_html/"
+
 
 echo "=== ✅ All Done! ==="
+
