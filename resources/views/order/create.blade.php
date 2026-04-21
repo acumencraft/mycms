@@ -194,45 +194,97 @@
                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-gray-900">
             @endauth
           </div>
-          <div class="space-y-2" x-data="{ checking: false, result: null, query: '{{ old('domain', request('domain', '')) }}' }">
-            <label class="block text-sm font-medium text-gray-700">Domain Name *</label>
-            <div class="flex gap-2">
-              <input type="text" name="domain" required placeholder="example.com"
-                     x-model="query"
-                     class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-gray-900">
-              <button type="button"
-                @click="
-                  checking = true; result = null;
-                  fetch('/domain-search', {
+{{-- DOMAIN --}}
+         <div class="space-y-2" x-data="{ 
+    checking: false, 
+    result: null, 
+    popup: false,
+    query: '{{ old('domain', request('domain', '')) }}' 
+}">
+    <label class="block text-sm font-medium text-gray-700">
+        Domain Name <span class="text-gray-400 font-normal">(optional)</span>
+    </label>
+    <div class="flex gap-2">
+        <input type="text" name="domain" placeholder="example.com (optional)"
+               x-model="query"
+               class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-gray-900">
+        <button type="button"
+            @click="
+                checking = true; result = null; popup = false;
+                fetch('/domain-search', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content},
                     body: JSON.stringify({domain: query})
-                  }).then(r => r.json()).then(d => { result = d; checking = false; }).catch(() => { checking = false; })
-                "
-                :disabled="!query || checking"
-                class="flex-shrink-0 h-10 px-3 text-xs font-medium rounded-md bg-gray-900 text-white hover:bg-gray-700 disabled:opacity-50 transition-colors whitespace-nowrap">
-                <span x-show="!checking">Check</span>
-                <span x-show="checking">...</span>
-              </button>
+                }).then(r => r.json()).then(d => { result = d; checking = false; popup = true; }).catch(() => { checking = false; })
+            "
+            :disabled="!query || checking"
+            class="flex-shrink-0 h-10 px-3 text-xs font-medium rounded-md bg-gray-900 text-white hover:bg-gray-700 disabled:opacity-50 transition-colors whitespace-nowrap">
+            <span x-show="!checking">Check</span>
+            <span x-show="checking">...</span>
+        </button>
+    </div>
+
+    {{-- Popup --}}
+    <div x-show="popup && result && result.length"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4"
+         style="display:none;">
+
+        {{-- Backdrop --}}
+        <div class="absolute inset-0 bg-black/50" @click="popup = false"></div>
+
+          {{-- Modal --}}
+        <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-md z-10 flex flex-col max-h-[90vh]">
+            {{-- Header --}}
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h3 class="text-base font-semibold text-gray-900">Domain Availability</h3>
+                <button @click="popup = false" type="button"
+                        class="text-gray-400 hover:text-gray-600 text-xl leading-none">✕</button>
             </div>
-            <div x-show="result && result.length" class="mt-2 space-y-1 max-h-40 overflow-y-auto">
-              <template x-for="r in result" :key="r.domain">
-                <div class="flex items-center justify-between px-3 py-1.5 rounded-md text-xs"
-                     :class="r.available ? 'bg-green-50 border border-green-200' : 'bg-gray-50 border border-gray-200'">
-                  <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full" :class="r.available ? 'bg-green-500' : 'bg-gray-400'"></span>
-                    <span class="font-medium" x-text="r.domain"></span>
-                    <span :class="r.available ? 'text-green-700' : 'text-gray-500'" x-text="r.available ? 'Available' : 'Taken'"></span>
-                  </div>
-                  <button x-show="r.available" type="button"
-                    @click="query = r.domain; document.querySelector('[name=domain]').value = r.domain"
-                    class="text-primary hover:underline font-medium">
-                    Select
-                  </button>
-                </div>
-              </template>
+
+            {{-- Results --}}
+            <div class="p-6 space-y-2 overflow-y-auto flex-1">
+                <template x-for="r in result" :key="r.domain">
+                    <div class="flex items-center justify-between px-4 py-3 rounded-lg"
+                         :class="r.available ? 'bg-green-50 border border-green-200' : 'bg-gray-50 border border-gray-200'">
+                        <div class="flex items-center gap-3">
+                            <span class="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                                  :class="r.available ? 'bg-green-500' : 'bg-gray-400'"></span>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900" x-text="r.domain"></p>
+                                <p class="text-xs" :class="r.available ? 'text-green-600' : 'text-gray-500'"
+                                   x-text="r.available ? 'Available' : 'Taken'"></p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button x-show="r.available" type="button"
+                                @click="query = r.domain; document.querySelector('[name=domain]').value = r.domain; popup = false"
+                                class="text-xs font-medium text-white bg-primary hover:bg-primary/90 px-3 py-1.5 rounded-md transition-colors">
+                                Select
+                            </button>
+                            <a x-show="r.available" :href="'https://www.namecheap.com/domains/registration/results/?domain=' + r.domain"
+                               target="_blank"
+                               class="text-xs font-medium text-primary hover:underline">
+                                Buy →
+                            </a>
+                        </div>
+                    </div>
+                </template>
             </div>
-          </div>
+
+            {{-- Footer --}}
+            <div class="px-6 py-4 border-t border-gray-100 text-center">
+                <button @click="popup = false" type="button"
+                        class="text-sm text-gray-500 hover:text-gray-700">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
         </div>
 
         <div class="space-y-2">

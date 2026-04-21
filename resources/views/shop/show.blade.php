@@ -26,33 +26,100 @@
   @endif
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-      {{-- LEFT: Images --}}
-      <div class="space-y-4">
-        {{-- Main Image --}}
-        @if($product->image)
-          <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }}"
-               class="w-full h-80 object-cover rounded-xl shadow-md">
-        @else
-          <div class="w-full h-80 bg-gradient-to-br from-primary/20 to-primary/5 rounded-xl flex items-center justify-center">
-            <svg class="w-20 h-20 text-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-            </svg>
-          </div>
-        @endif
+{{-- LEFT: Images --}}
+<div class="space-y-3">
+  @php
+    $allImages = collect();
+    if ($product->image) $allImages->push(asset('storage/'.$product->image));
+    if ($product->gallery_images) {
+      foreach ($product->gallery_images as $img) {
+        $allImages->push(asset('storage/'.$img));
+      }
+    }
+  @endphp
 
-        {{-- Gallery --}}
-        @if($product->gallery_images && count($product->gallery_images) > 0)
-        <div class="grid grid-cols-3 gap-3">
-          @foreach($product->gallery_images as $image)
-          <img src="{{ asset('storage/'.$image) }}" alt="{{ $product->name }}"
-               class="w-full h-24 object-cover rounded-lg shadow-sm cursor-pointer hover:opacity-90 transition-opacity">
-          @endforeach
-        </div>
-        @endif
-      </div>
+  {{-- Main Image --}}
+  <div class="relative w-full bg-gray-100 rounded-xl overflow-hidden" style="height: 380px;">
+    <img id="main-image"
+         src="{{ $allImages->first() ?? '' }}"
+         alt="{{ $product->name }}"
+         class="w-full h-full object-contain cursor-zoom-in"
+         onclick="openLightbox(currentIndex)">
+
+    @if($allImages->count() > 1)
+    <button onclick="changeImage(-1)"
+            class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-9 h-9 flex items-center justify-center text-lg transition-colors">
+      ‹
+    </button>
+    <button onclick="changeImage(1)"
+            class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-9 h-9 flex items-center justify-center text-lg transition-colors">
+      ›
+    </button>
+    <div class="absolute bottom-3 right-3 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
+      <span id="img-counter">1</span>/{{ $allImages->count() }}
+    </div>
+    @endif
+  </div>
+
+  {{-- Thumbnails --}}
+  @if($allImages->count() > 1)
+  <div class="flex gap-2 overflow-x-auto pb-1">
+    @foreach($allImages as $i => $img)
+    <div class="flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden cursor-pointer border-2 transition-all
+                {{ $i === 0 ? 'border-primary' : 'border-transparent' }}"
+         id="thumb-{{ $i }}"
+         onclick="setImage({{ $i }})">
+      <img src="{{ $img }}" alt="{{ $product->name }}"
+           class="w-full h-full object-cover hover:opacity-90 transition-opacity">
+    </div>
+    @endforeach
+  </div>
+  @endif
+
+{{-- Lightbox --}}
+<div id="lightbox"
+     class="fixed inset-0 z-[9999] hidden items-center justify-center p-4"
+     style="background: rgba(0,0,0,0); transition: background 0.3s ease;"
+     onclick="closeLightbox()">
+
+  {{-- Close --}}
+  <button onclick="closeLightbox()"
+          style="position:absolute; top:16px; right:16px; z-index:10000;"
+          class="bg-white/20 hover:bg-white/40 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl transition-colors">
+    ✕
+  </button>
+
+  @if($allImages->count() > 1)
+  {{-- Prev --}}
+  <button onclick="event.stopPropagation(); lightboxChange(-1)"
+          style="position:absolute; left:16px; top:50%; transform:translateY(-50%); z-index:10000;"
+          class="bg-white/20 hover:bg-white/40 text-white rounded-full w-12 h-12 flex items-center justify-center text-3xl transition-colors">
+    ‹
+  </button>
+
+  {{-- Next --}}
+  <button onclick="event.stopPropagation(); lightboxChange(1)"
+          style="position:absolute; right:16px; top:50%; transform:translateY(-50%); z-index:10000;"
+          class="bg-white/20 hover:bg-white/40 text-white rounded-full w-12 h-12 flex items-center justify-center text-3xl transition-colors">
+    ›
+  </button>
+  @endif
+
+  {{-- Image --}}
+  <img id="lightbox-img" src="" alt="{{ $product->name }}"
+       style="max-width:100%; max-height:85vh; object-fit:contain; border-radius:8px; opacity:0; transition: opacity 0.3s ease;"
+       onclick="event.stopPropagation()">
+
+  @if($allImages->count() > 1)
+  <div style="position:absolute; bottom:16px; left:50%; transform:translateX(-50%); z-index:10000;"
+       class="bg-black/50 text-white text-sm px-4 py-1 rounded-full">
+    <span id="lightbox-counter">1</span>/{{ $allImages->count() }}
+  </div>
+  @endif
+</div>
+</div>
 
       {{-- RIGHT: Details --}}
       <div>
@@ -148,4 +215,96 @@
 
   </div>
 </main>
+@push('scripts')
+<script>
+const images = @json($allImages->values());
+let currentIndex = 0;
+
+function setImage(index) {
+  currentIndex = index;
+  document.getElementById('main-image').src = images[index];
+  document.getElementById('img-counter').textContent = index + 1;
+  // Update thumbnails
+  images.forEach((_, i) => {
+    const thumb = document.getElementById('thumb-' + i);
+    if (thumb) {
+      thumb.className = thumb.className.replace('border-primary', 'border-transparent');
+      if (i === index) thumb.className = thumb.className.replace('border-transparent', 'border-primary');
+    }
+  });
+}
+
+function changeImage(dir) {
+  let next = currentIndex + dir;
+  if (next < 0) next = images.length - 1;
+  if (next >= images.length) next = 0;
+  setImage(next);
+}
+
+function openLightbox(index) {
+  currentIndex = index;
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  
+  img.style.opacity = '0';
+  img.src = images[index];
+  
+  lb.classList.remove('hidden');
+  lb.classList.add('flex');
+  document.body.style.overflow = 'hidden';
+  
+  // Fade in background
+  requestAnimationFrame(() => {
+    lb.style.background = 'rgba(0,0,0,0.9)';
+    setTimeout(() => { img.style.opacity = '1'; }, 50);
+  });
+  
+  if (document.getElementById('lightbox-counter')) {
+    document.getElementById('lightbox-counter').textContent = index + 1;
+  }
+}
+
+function closeLightbox() {
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  
+  img.style.opacity = '0';
+  lb.style.background = 'rgba(0,0,0,0)';
+  
+  setTimeout(() => {
+    lb.classList.add('hidden');
+    lb.classList.remove('flex');
+    document.body.style.overflow = '';
+  }, 300);
+}
+
+function lightboxChange(dir) {
+  const img = document.getElementById('lightbox-img');
+  let next = currentIndex + dir;
+  if (next < 0) next = images.length - 1;
+  if (next >= images.length) next = 0;
+  currentIndex = next;
+  
+  // Fade transition
+  img.style.opacity = '0';
+  setTimeout(() => {
+    img.src = images[next];
+    img.style.opacity = '1';
+  }, 200);
+  
+  if (document.getElementById('lightbox-counter')) {
+    document.getElementById('lightbox-counter').textContent = next + 1;
+  }
+}
+
+document.addEventListener('keydown', function(e) {
+  const lb = document.getElementById('lightbox');
+  if (!lb.classList.contains('hidden')) {
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') lightboxChange(-1);
+    if (e.key === 'ArrowRight') lightboxChange(1);
+  }
+});
+</script>
+@endpush
 @endsection

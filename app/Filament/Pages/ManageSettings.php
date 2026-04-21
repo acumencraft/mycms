@@ -143,6 +143,14 @@ class ManageSettings extends Page implements HasForms
                             ->label('Testimonials Menu Label')
                             ->placeholder('Testimonials')
                             ->maxLength(50),
+                       Forms\Components\Toggle::make('module_shop')
+                            ->label('Shop')
+                            ->default(true)
+                            ->onColor('success'),
+                       Forms\Components\TextInput::make('module_shop_label')
+                            ->label('Shop Menu Label')
+                            ->placeholder('Shop')
+                            ->maxLength(50),
                     ])->columns(2)->collapsed(),
 
                 Section::make('Social Media')
@@ -174,6 +182,7 @@ class ManageSettings extends Page implements HasForms
             'module_portfolio'  => '/portfolio',
             'module_blog'       => '/blog',
             'module_guides'     => '/guides',
+            'module_shop'       => '/shop',
         ];
 
         foreach ($moduleMap as $settingKey => $url) {

@@ -50,7 +50,7 @@ Route::get('/order', [OrderController::class, 'create'])->name('order.create');
 Route::post('/order', [OrderController::class, 'store'])->name('order.store');
 Route::get('/order/success/{orderId}', [OrderController::class, 'success'])->name('order.success');
 
-Route::middleware(['auth', 'client'])->prefix('client-dashboard')->name('client-dashboard.')->group(function () {
+Route::middleware(['auth','verified','client'])->prefix('client-dashboard')->name('client-dashboard.')->group(function () {
     Route::get('/', [ClientDashboardController::class, 'index'])->name('index');
     Route::get('/project/{id}', [ClientDashboardController::class, 'project'])->name('project');
     Route::post('/project/{projectId}/message', [ClientDashboardController::class, 'sendMessage'])->name('send-message');
@@ -81,6 +81,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Dynamic CMS Pages
+Route::get('/page/{slug}', [App\Http\Controllers\PageController::class, 'show'])->name('page.show');
+
 // Social Auth
 Route::get('/auth/{provider}/redirect', [SocialAuthController::class, 'redirect'])->name('social.redirect');
 Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback'])->name('social.callback');
@@ -95,6 +98,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/purchase/{purchase}/download', [App\Http\Controllers\ShopController::class, 'download'])->name('purchase.download');
 });
 
+Route::middleware(['module:module_shop'])->group(function () {
+    Route::get('/shop', [App\Http\Controllers\ShopController::class, 'index'])->name('shop.index');
+    Route::get('/shop/{slug}', [App\Http\Controllers\ShopController::class, 'show'])->name('shop.show');
+});
+
+Route::middleware(['auth', 'verified', 'module:module_shop'])->group(function () {
+    Route::get('/shop/{slug}/checkout', [App\Http\Controllers\ShopController::class, 'checkout'])->name('shop.checkout');
+    Route::get('/shop/{slug}/success', [App\Http\Controllers\ShopController::class, 'checkoutSuccess'])->name('shop.checkout.success');
+    Route::get('/shop/{slug}/cancel', [App\Http\Controllers\ShopController::class, 'checkoutCancel'])->name('shop.checkout.cancel');
+    Route::get('/purchase/{purchase}/download', [App\Http\Controllers\ShopController::class, 'download'])->name('purchase.download');
+});
 require __DIR__.'/auth.php';
 Route::get('/testimonials', [App\Http\Controllers\TestimonialController::class, 'index'])->name('testimonials');
 Route::post('/publications/{publication}/comments', [CommentController::class, 'store'])->name('comments.store');

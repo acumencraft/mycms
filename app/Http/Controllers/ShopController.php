@@ -58,13 +58,17 @@ public function download(Purchase $purchase)
     }
 
     if ($purchase->download_limit <= 0) {
-        abort(403, 'Download limit reached.');
+        return redirect()->back()->with('error', 'Download limit reached.');
+    }
+
+    if ($purchase->download_expires_at && $purchase->download_expires_at->isPast()) {
+        return redirect()->back()->with('error', 'Download access has expired.');
     }
 
     $filePath = storage_path('app/public/' . $purchase->version->file_path);
 
     if (!file_exists($filePath)) {
-        abort(404);
+        return redirect()->back()->with('error', 'File not found. Please contact support.');
     }
 
     // Log download
@@ -76,10 +80,12 @@ public function download(Purchase $purchase)
         'ip_address'     => request()->ip(),
     ]);
 
-    // Decrement limit
     $purchase->decrement('download_limit');
 
-    return response()->download($filePath);
+    return response()->download(
+        $filePath,
+        $purchase->version->product->name . '_v' . $purchase->version->version_number . '.zip'
+    );
 }
 public function checkout(string $slug)
 {

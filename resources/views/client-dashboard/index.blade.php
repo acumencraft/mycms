@@ -209,8 +209,10 @@
         <div class="p-6 flex items-center justify-between gap-4">
           <div class="flex items-center gap-4">
             @if($purchase->version->product->image)
-              <img src="{{ asset('storage/'.$purchase->version->product->image) }}"
+             <a href="{{ route('shop.show', $purchase->version->product->slug) }}">
+ <img src="{{ asset('storage/'.$purchase->version->product->image) }}"
                    class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
+</a>
             @else
               <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                 <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,7 +222,10 @@
               </div>
             @endif
             <div>
-              <p class="font-medium text-gray-900">{{ $purchase->version->product->name }}</p>
+              <a href="{{ route('shop.show', $purchase->version->product->slug) }}" 
+   class="font-medium text-gray-900 hover:text-primary transition-colors">
+  {{ $purchase->version->product->name }}
+</a>
               <p class="text-sm text-gray-500">
                 v{{ $purchase->version->version_number }} •
                 ${{ number_format($purchase->amount, 2) }} •

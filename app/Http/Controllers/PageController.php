@@ -9,6 +9,14 @@ use Illuminate\Support\Facades\Mail;
 
 class PageController extends Controller
 {
+    public function show(string $slug)
+{
+    $page = Page::where('slug', $slug)
+        ->where('status', 'published')
+        ->firstOrFail();
+
+    return view('frontend.page', compact('page'));
+}
     public function about()
     {
         $page = Page::where('slug', 'about')->where('status', 'published')->first();

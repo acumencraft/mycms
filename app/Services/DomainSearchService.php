@@ -39,48 +39,41 @@ class DomainSearchService
         });
     }
 
-    /**
-     * Simulates a call to an external domain search API.
-     * In a real application, this would use Guzzle or a dedicated SDK.
-     *
-     * @param string $domain The domain to check.
-     * @return array The simulated API response.
-     */
-    private function callExternalDomainApi(string $domain): array
-    {
-        // Simulate network latency and API response
-        sleep(1);
+   private function callExternalDomainApi(string $domain): array
+  {
+    $baseName = preg_replace('/\.[^.]+$/', '', $domain);
+    $baseName = explode('.', $baseName)[0];
 
-        $baseName = preg_replace('/\.[^.]+$/', '', $domain);
-        $baseName = explode('.', $baseName)[0];
+    $tlds = ['.com', '.net', '.org', '.io', '.co', '.ge', '.dev', '.app'];
 
-        $tlds = ['.com', '.net', '.org', '.io', '.co', '.ge', '.dev', '.app'];
-        $results = [];
+    $prices = [
+        '.com' => 12, '.net' => 14, '.org' => 13,
+        '.io' => 39, '.co' => 25, '.ge' => 20,
+        '.dev' => 18, '.app' => 20,
+    ];
 
-        foreach ($tlds as $tld) {
-            $fullDomain = $baseName . $tld;
-            // Simulate availability: random for demonstration, real API would provide this
-            $available = (bool)rand(0, 1);
+    $results = [];
 
-            $prices = [
-                '.com' => 12, '.net' => 14, '.org' => 13,
-                '.io' => 39, '.co' => 25, '.ge' => 20,
-                '.dev' => 18, '.app' => 20,
-            ];
+    foreach ($tlds as $tld) {
+        $fullDomain = $baseName . $tld;
+        
+        // DNS lookup - თუ ჩანაწერი არ არის, დომენი თავისუფალია
+        $records = @dns_get_record($fullDomain, DNS_A | DNS_NS | DNS_MX);
+        $available = empty($records);
 
-            $results[] = [
-                'domain' => $fullDomain,
-                'available' => $available,
-                'price' => $prices[$tld] ?? 15,
-                'tld' => $tld,
-            ];
-        }
-
-        // Sort: available first
-        usort($results, fn($a, $b) => $b['available'] - $a['available']);
-
-        Log::info("Called external domain API for: " . $domain);
-
-        return $results;
+        $results[] = [
+            'domain'    => $fullDomain,
+            'available' => $available,
+            'price'     => $prices[$tld] ?? 15,
+            'tld'       => $tld,
+        ];
     }
+
+    // Available პირველი
+    usort($results, fn($a, $b) => $b['available'] - $a['available']);
+
+    Log::info("DNS check for: " . $domain);
+
+    return $results;
+  }
 }

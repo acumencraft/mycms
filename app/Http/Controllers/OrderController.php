@@ -25,7 +25,7 @@ class OrderController extends Controller
             'client_name'             => 'required|string|max:255',
             'email'                   => 'required|email|max:255',
             'phone'                   => 'nullable|string|max:20',
-            'domain'                  => 'required|string|max:255',
+            'domain'                  => 'nullable|string|max:255|regex:/^[a-zA-Z0-9][a-zA-Z0-9\-\.]{0,253}[a-zA-Z0-9]$|^$/',
             'website_type'            => 'required|string|max:255',
             'timeline'                => 'required|string|max:255',
             'budget_range'            => 'required|string|max:255',
