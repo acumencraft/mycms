@@ -199,7 +199,7 @@
     checking: false, 
     result: null, 
     popup: false,
-    query: '{{ old('domain', request('domain', '')) }}' 
+    query: '{{ old("domain", request("domain", "")) }}' 
 }">
     <label class="block text-sm font-medium text-gray-700">
         Domain Name <span class="text-gray-400 font-normal">(optional)</span>

@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', $title ?? 'Login - ' . config('agency.seo.title_suffix') . '')
+@section('title', $title ?? 'Login - ' . config('agency.seo.title_suffix'))
 @section('description', $description ?? 'Login to your ' . config('agency.name') . ' account')
 
 @section('content')
