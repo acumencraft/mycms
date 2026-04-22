@@ -109,6 +109,21 @@ Route::middleware(['auth', 'verified', 'module:module_shop'])->group(function ()
     Route::get('/shop/{slug}/cancel', [App\Http\Controllers\ShopController::class, 'checkoutCancel'])->name('shop.checkout.cancel');
     Route::get('/purchase/{purchase}/download', [App\Http\Controllers\ShopController::class, 'download'])->name('purchase.download');
 });
+
+Route::get('/admin-test', function () {
+    if (!auth()->check()) {
+        return 'Not logged in';
+    }
+    $user = auth()->user();
+    return [
+        'id' => $user->id,
+        'email' => $user->email,
+        'roles' => $user->getRoleNames(),
+        'status' => $user->status,
+        'canAccess' => $user->canAccessPanel(app(\Filament\Panel::class)),
+    ];
+})->middleware('auth');
+
 require __DIR__.'/auth.php';
 Route::get('/testimonials', [App\Http\Controllers\TestimonialController::class, 'index'])->name('testimonials');
 Route::post('/publications/{publication}/comments', [CommentController::class, 'store'])->name('comments.store');
