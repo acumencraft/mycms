@@ -133,3 +133,15 @@ Route::prefix('polls')->name('polls.')->group(function () {
     Route::get('/{id}', [PollController::class, 'show'])->name('show');
     Route::post('/{id}/vote', [PollController::class, 'vote'])->name('vote');
 });
+
+Route::middleware(['auth', 'verified', 'client'])->group(function () {
+    Route::post('/subscription/cancel', function () {
+        $sub = \App\Models\Subscription::where('user_id', auth()->id())
+            ->where('status', 'active')
+            ->first();
+        if ($sub) {
+            $sub->update(['cancel_requested' => true]);
+        }
+        return back()->with('success', 'Cancellation requested. We will contact you shortly.');
+    })->name('subscription.cancel');
+});

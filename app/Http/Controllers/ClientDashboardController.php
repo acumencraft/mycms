@@ -56,7 +56,12 @@ public function index()
         ->latest()
         ->get();
 
-    return view('client-dashboard.index', compact('projects', 'orders', 'recentMessages', 'stats', 'purchases'));
+    $subscription = \App\Models\Subscription::where('user_id', auth()->id())
+        ->with('plan')
+        ->whereIn('status', ['active', 'pending'])
+        ->latest()
+        ->first();
+    return view('client-dashboard.index', compact('projects', 'orders', 'recentMessages', 'stats', 'purchases', 'subscription'));
 }
 
     public function project($id)

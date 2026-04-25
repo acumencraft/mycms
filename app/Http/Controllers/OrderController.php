@@ -15,7 +15,6 @@ class OrderController extends Controller
     {
         $services = $this->orderService->getAvailableServices();
         $features = $this->orderService->getAvailableFeatures();
-
         return view('order.create', compact('services', 'features'));
     }
 
@@ -25,7 +24,7 @@ class OrderController extends Controller
             'client_name'             => 'required|string|max:255',
             'email'                   => 'required|email|max:255',
             'phone'                   => 'nullable|string|max:20',
-            'domain'                  => 'nullable|string|max:255|regex:/^[a-zA-Z0-9][a-zA-Z0-9\-\.]{0,253}[a-zA-Z0-9]$|^$/',
+            'domain'                  => 'nullable|string|max:255',
             'website_type'            => 'required|string|max:255',
             'timeline'                => 'required|string|max:255',
             'budget_range'            => 'required|string|max:255',
@@ -44,10 +43,7 @@ class OrderController extends Controller
 
         try {
             $order = $this->orderService->createOrder($validated, $clientId);
-
-            // session-ში ვინახავთ — მხოლოდ ამ user-ს შეუძლია success გვერდის ნახვა
             session(['order_success_id' => $order->id]);
-
             return redirect()->route('order.success', $order->id)
                 ->with('success', 'Your order has been submitted successfully!');
         } catch (\Exception $e) {
@@ -57,20 +53,11 @@ class OrderController extends Controller
 
     public function success($orderId)
     {
-        // session შემოწმება — პირდაპირ URL-ით წვდომა დაიბლოკება
-        if (session('order_success_id') != $orderId) {
+        $order = \App\Models\Order::findOrFail($orderId);
+        if (auth()->check() && $order->user_id && $order->user_id !== auth()->id()) {
             abort(403, 'Access denied.');
         }
-
-        $order = $this->orderService->getOrderById($orderId);
-
-        if (!$order) {
-            abort(404);
-        }
-
-        // session გავასუფთავოთ — ერთხელ ნახვა საკმარისია
         session()->forget('order_success_id');
-
         return view('order.success', compact('order'));
     }
 }

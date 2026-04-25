@@ -197,7 +197,40 @@
       </div>
 </div>
 
-    {{-- Digital Purchases --}}
+    {{-- Subscription --}}
+    @if(isset($subscription))
+    <div class="mt-6 bg-white rounded-xl border border-gray-100 shadow-sm">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h2 class="text-base font-semibold text-gray-900">My Subscription</h2>
+        <span class="text-xs px-2 py-1 rounded-full font-medium {{ $subscription->status === 'active' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+          {{ ucfirst($subscription->status) }}
+        </span>
+      </div>
+      <div class="p-6 flex items-center justify-between gap-4">
+        <div>
+          <p class="font-semibold text-gray-900">{{ $subscription->plan->name }}</p>
+          <p class="text-sm text-gray-500">€{{ $subscription->plan->price }} {{ $subscription->plan->billing_label }}</p>
+          @if($subscription->next_invoice_at)
+          <p class="text-xs text-gray-400 mt-1">Next invoice: {{ $subscription->next_invoice_at->format('M d, Y') }}</p>
+          @endif
+        </div>
+        <div>
+          @if($subscription->cancel_requested)
+            <span class="text-sm text-orange-500 font-medium">Cancellation pending...</span>
+          @elseif($subscription->status === 'active')
+            <form method="POST" action="{{ route('subscription.cancel') }}">
+              @csrf
+              <button type="submit" onclick="return confirm('Cancel subscription?')" class="text-sm text-red-500 hover:text-red-700 font-medium">
+                Cancel Subscription
+              </button>
+            </form>
+          @endif
+        </div>
+      </div>
+    </div>
+    @endif
+
+        {{-- Digital Purchases --}}
     @if(isset($purchases) && $purchases->count())
     <div class="mt-6 bg-white rounded-xl border border-gray-100 shadow-sm">
       <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
