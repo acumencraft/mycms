@@ -96,6 +96,13 @@ class BlogCommentResource extends Resource
                 Tables\Columns\IconColumn::make('is_approved')
                     ->boolean()
                     ->label('Approved'),
+                Tables\Columns\IconColumn::make('is_blocked')
+                    ->boolean()
+                    ->label('Blocked')
+                    ->trueIcon('heroicon-o-no-symbol')
+                    ->falseIcon('heroicon-o-check-circle')
+                    ->trueColor('danger')
+                    ->falseColor('success'),
                 Tables\Columns\IconColumn::make('parent_id')
                     ->label('Reply')
                     ->boolean()
@@ -107,6 +114,11 @@ class BlogCommentResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
+                Tables\Filters\TernaryFilter::make('is_blocked')
+                    ->label('Blocked')
+                    ->trueLabel('Blocked')
+                    ->falseLabel('Not Blocked')
+                    ->placeholder('All'),
                 Tables\Filters\TernaryFilter::make('is_approved')
                     ->label('Status')
                     ->trueLabel('Approved')
@@ -126,6 +138,18 @@ class BlogCommentResource extends Resource
                     ->color('danger')
                     ->visible(fn(Comment $record) => $record->is_approved)
                     ->action(fn(Comment $record) => $record->update(['is_approved' => false])),
+                Actions\Action::make('block')
+                    ->label('Block')
+                    ->icon('heroicon-o-no-symbol')
+                    ->color('danger')
+                    ->visible(fn(Comment $record) => !$record->is_blocked)
+                    ->action(fn(Comment $record) => $record->update(['is_blocked' => true])),
+                Actions\Action::make('unblock')
+                    ->label('Unblock')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn(Comment $record) => $record->is_blocked)
+                    ->action(fn(Comment $record) => $record->update(['is_blocked' => false])),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ])

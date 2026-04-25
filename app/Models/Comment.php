@@ -20,10 +20,12 @@ class Comment extends Model
         'user_name',
         'content',
         'is_approved',
+        'is_blocked',
     ];
 
     protected $casts = [
         'is_approved' => 'boolean',
+        'is_blocked' => 'boolean',
     ];
 
     public function publication(): BelongsTo
