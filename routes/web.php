@@ -137,12 +137,43 @@ Route::prefix('polls')->name('polls.')->group(function () {
 });
 
 Route::middleware(['auth', 'verified', 'client'])->group(function () {
+    Route::get('/subscribe', function () {
+        $plans = \App\Models\SubscriptionPlan::where('is_active', true)->orderBy('sort')->get();
+        $current = \App\Models\Subscription::where('user_id', auth()->id())
+            ->whereIn('status', ['active', 'pending'])
+            ->with('plan')
+            ->first();
+        return view('subscription.plans', compact('plans', 'current'));
+    })->name('subscription.plans');
+    Route::post('/subscribe/{plan}', function (\App\Models\SubscriptionPlan $plan) {
+        $existing = \App\Models\Subscription::where('user_id', auth()->id())
+            ->whereIn('status', ['active', 'pending'])
+            ->first();
+        if ($existing) {
+            return back()->with('error', 'You already have an active subscription.');
+        }
+        $sub = \App\Models\Subscription::create([
+            'user_id'              => auth()->id(),
+            'subscription_plan_id' => $plan->id,
+            'status'               => 'pending',
+        ]);
+        $sub->load(['user', 'plan']);
+        \Illuminate\Support\Facades\Mail::to(config('agency.admin_email'))
+            ->send(new \App\Mail\SubscriptionCancelAdminMail($sub));
+        return redirect()->route('client-dashboard.index')
+            ->with('success', 'Subscription request sent! We will activate it shortly.');
+    })->name('subscription.request');
     Route::post('/subscription/cancel', function () {
         $sub = \App\Models\Subscription::where('user_id', auth()->id())
             ->where('status', 'active')
             ->first();
         if ($sub) {
             $sub->update(['cancel_requested' => true]);
+            $sub->load(['user', 'plan']);
+            \Illuminate\Support\Facades\Mail::to($sub->user->email)
+                ->send(new \App\Mail\SubscriptionCancelRequestMail($sub));
+            \Illuminate\Support\Facades\Mail::to(config('agency.admin_email'))
+                ->send(new \App\Mail\SubscriptionCancelAdminMail($sub));
         }
         return back()->with('success', 'Cancellation requested. We will contact you shortly.');
     })->name('subscription.cancel');
