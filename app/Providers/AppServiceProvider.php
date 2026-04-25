@@ -17,6 +17,8 @@ use App\Observers\PublicationObserver;
 use App\Observers\PortfolioProjectObserver;
 use App\Observers\GuideObserver;
 use App\Observers\ProjectObserver;
+use App\Observers\DigitalProductObserver;
+use App\Models\DigitalProduct;
 use App\Models\Project;
 use App\Models\Guide;
 use App\Models\PortfolioProject;
@@ -36,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         PortfolioProject::observe(PortfolioProjectObserver::class);
         Guide::observe(GuideObserver::class);
         Project::observe(ProjectObserver::class);
+        DigitalProduct::observe(DigitalProductObserver::class);
 
         Service::saved(fn() => Cache::forget('home.services'));
         Service::deleted(fn() => Cache::forget('home.services'));

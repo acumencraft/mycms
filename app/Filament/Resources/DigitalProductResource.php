@@ -78,6 +78,8 @@ class DigitalProductResource extends Resource
                         ->image()
                         ->disk('public')
                         ->directory('products/covers')
+                        ->imageResizeMode('cover')
+                        ->imageEditor()
                         ->columnSpanFull(),
                 ]),
 
@@ -91,6 +93,7 @@ class DigitalProductResource extends Resource
                         ->disk('public')
                         ->directory('products/gallery')
                         ->maxFiles(5)
+                        ->imageEditor()
                         ->columnSpanFull(),
                 ]),
 
