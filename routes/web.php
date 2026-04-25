@@ -46,9 +46,11 @@ Route::middleware('auth')->group(function () {
 
 Route::post('/domain-search', [DomainSearchController::class, 'search'])->name('domain.search');
 
-Route::get('/order', [OrderController::class, 'create'])->name('order.create');
-Route::post('/order', [OrderController::class, 'store'])->name('order.store');
-Route::get('/order/success/{orderId}', [OrderController::class, 'success'])->name('order.success');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/order', [OrderController::class, 'create'])->name('order.create');
+    Route::post('/order', [OrderController::class, 'store'])->name('order.store');
+    Route::get('/order/success/{orderId}', [OrderController::class, 'success'])->name('order.success');
+});
 
 Route::middleware(['auth','verified','client'])->prefix('client-dashboard')->name('client-dashboard.')->group(function () {
     Route::get('/', [ClientDashboardController::class, 'index'])->name('index');
@@ -63,7 +65,7 @@ Route::get('/dashboard', function () {
     $user = auth()->user();
 
     if ($user->hasRole(['Admin', 'Super Admin'])) {
-        return redirect('/admin');
+        return redirect('/' . config('agency.admin_path', 'manage'));
     }
 
     if ($user->hasRole('Client')) {
@@ -126,7 +128,7 @@ Route::get('/admin-test', function () {
 
 require __DIR__.'/auth.php';
 Route::get('/testimonials', [App\Http\Controllers\TestimonialController::class, 'index'])->name('testimonials');
-Route::post('/publications/{publication}/comments', [CommentController::class, 'store'])->name('comments.store');
+Route::post('/publications/{publication}/comments', [CommentController::class, 'store'])->name('comments.store')->middleware(['auth', 'verified']);
 
 Route::prefix('polls')->name('polls.')->group(function () {
     Route::get('/', [PollController::class, 'index'])->name('index');

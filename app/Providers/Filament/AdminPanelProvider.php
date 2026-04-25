@@ -25,7 +25,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('manage')
+            ->path(config('agency.admin_path', 'manage'))
             ->colors([
                 'primary' => Color::Amber,
             ])

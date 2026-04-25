@@ -13,6 +13,7 @@ return [
     'tagline'       => env('AGENCY_TAGLINE', 'Build Your Digital Presence'),
     'email'         => env('AGENCY_EMAIL', 'info@archvadze.com'),
     'admin_email'   => env('ADMIN_EMAIL', 'admin@archvadze.com'),
+    'admin_path'    => env('ADMIN_PATH', 'manage'),
     'phone'         => env('AGENCY_PHONE', '+995 555 123 456'),
     'address'       => env('AGENCY_ADDRESS', 'Tbilisi, Georgia'),
     'url'           => env('APP_URL', 'https://archvadze.com'),

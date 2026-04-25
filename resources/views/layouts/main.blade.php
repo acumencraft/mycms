@@ -69,8 +69,8 @@
                             <a href="{{ route('client-dashboard.profile') }}" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
                                 Profile
                             </a>
-                        @else
-                            <a href="/admin" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+                        @elseif(auth()->user()->hasRole(['Super Admin', 'Admin', 'Editor', 'Support']))
+                            <a href="/{{ config('agency.admin_path', 'manage') }}" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
                                 Admin Panel
                             </a>
                         @endif
@@ -114,9 +114,9 @@
                             <a href="{{ route('client-dashboard.index') }}" class="block py-2 text-sm font-medium text-gray-600">
                                 Dashboard
                             </a>
-                        @else
-                            <a href="/admin" class="block py-2 text-sm font-medium text-gray-600">
-                                Admin
+                        @elseif(auth()->user()->hasRole(['Super Admin', 'Admin', 'Editor', 'Support']))
+                            <a href="/{{ config('agency.admin_path', 'manage') }}" class="block py-2 text-sm font-medium text-gray-600">
+                                Admin Panel
                             </a>
                         @endif
                         <form method="POST" action="{{ route('logout') }}" class="inline">

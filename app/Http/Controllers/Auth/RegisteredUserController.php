@@ -53,7 +53,7 @@ class RegisteredUserController extends Controller
         return redirect($request->redirect_to);
     }
 
-    return redirect(route('dashboard', absolute: false));
+    return redirect('/')->with('status', 'Registration successful! Please check your email to verify your account.');
 }
 
 }

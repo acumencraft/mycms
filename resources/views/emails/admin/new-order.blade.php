@@ -26,7 +26,7 @@ A new order has been placed on **{{ config('agency.full_name') }}**.
 {{ $order->additional_requirements }}
 @endif
 
-<x-mail::button :url="config('app.url') . '/admin/orders/' . $order->id . '/edit'" color="primary">
+<x-mail::button :url="config('app.url') . '/' . config('agency.admin_path', 'manage') . '/orders/' . $order->id . '/edit'" color="primary">
 View Order in Admin
 </x-mail::button>
 

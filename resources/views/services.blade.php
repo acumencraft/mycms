@@ -33,7 +33,7 @@
             <p class="text-primary font-semibold mb-4">Starting at ${{ number_format($service->base_price, 0) }}</p>
           @endif
           <div>
-            <a href="{{ route('order.create') }}?service={{ $service->id }}"
+            <a href="{{ auth()->check() && !auth()->user()->hasVerifiedEmail() ? route('verification.notice') : route('order.create') . '?service=' . $service->id }}"
                class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium h-10 px-6">
               {{ $service->button_text ?? 'Get Started' }}
             </a>
@@ -74,7 +74,7 @@
             <p class="text-primary font-semibold mb-4">Starting at ${{ number_format($service->base_price, 0) }}</p>
           @endif
           <div>
-            <a href="{{ route('order.create') }}?service={{ $service->id }}"
+            <a href="{{ auth()->check() && !auth()->user()->hasVerifiedEmail() ? route('verification.notice') : route('order.create') . '?service=' . $service->id }}"
                class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium h-10 px-6">
               {{ $service->button_text ?? 'Get Started' }}
             </a>

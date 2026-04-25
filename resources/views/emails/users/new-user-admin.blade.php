@@ -10,7 +10,7 @@ A new user has registered on **{{ config('agency.full_name') }}**.
 - **Registered:** {{ $user->created_at->format('M d, Y H:i') }}
 </x-mail::panel>
 
-<x-mail::button :url="config('app.url') . '/admin/users'" color="primary">
+<x-mail::button :url="config('app.url') . '/' . config('agency.admin_path', 'manage') . '/users'" color="primary">
 View in Admin Panel
 </x-mail::button>
 
