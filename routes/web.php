@@ -38,6 +38,7 @@ Route::post('/newsletter/subscribe', [App\Http\Controllers\NewsletterController:
 Route::get('/newsletter/unsubscribe/{token}', [App\Http\Controllers\NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'sendContact'])->name('contact.send');
+
 Route::middleware('auth')->group(function () {
     Route::get('/payment/{orderId}/create', [PaymentController::class, 'createPayment'])->name('payment.create');
     Route::get('/payment/{orderId}/success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
@@ -52,7 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/order/success/{orderId}', [OrderController::class, 'success'])->name('order.success');
 });
 
-Route::middleware(['auth','verified','client'])->prefix('client-dashboard')->name('client-dashboard.')->group(function () {
+Route::middleware(['auth', 'verified', 'client'])->prefix('client-dashboard')->name('client-dashboard.')->group(function () {
     Route::get('/', [ClientDashboardController::class, 'index'])->name('index');
     Route::get('/project/{id}', [ClientDashboardController::class, 'project'])->name('project');
     Route::post('/project/{projectId}/message', [ClientDashboardController::class, 'sendMessage'])->name('send-message');
@@ -63,17 +64,12 @@ Route::middleware(['auth','verified','client'])->prefix('client-dashboard')->nam
 
 Route::get('/dashboard', function () {
     $user = auth()->user();
-
-    if ($user->hasRole(['Admin', 'Super Admin'])) {
+    if ($user->hasRole(['Super Admin', 'Admin', 'Editor', 'Support'])) {
         return redirect('/' . config('agency.admin_path', 'manage'));
     }
-
-    if ($user->hasRole('Client')) {
-        return redirect()->route('client-dashboard.index');
+    if (!$user->hasRole('Client')) {
+        $user->assignRole('Client');
     }
-
-    // Fallback: assign client role if user has no role
-    $user->assignRole('Client');
     return redirect()->route('client-dashboard.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -83,22 +79,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Dynamic CMS Pages
 Route::get('/page/{slug}', [App\Http\Controllers\PageController::class, 'show'])->name('page.show');
 
-// Social Auth
 Route::get('/auth/{provider}/redirect', [SocialAuthController::class, 'redirect'])->name('social.redirect');
 Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback'])->name('social.callback');
-
-// Shop
-Route::get('/shop', [App\Http\Controllers\ShopController::class, 'index'])->name('shop.index');
-Route::get('/shop/{slug}', [App\Http\Controllers\ShopController::class, 'show'])->name('shop.show');
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/shop/{slug}/checkout', [App\Http\Controllers\ShopController::class, 'checkout'])->name('shop.checkout');
-    Route::get('/shop/{slug}/success', [App\Http\Controllers\ShopController::class, 'checkoutSuccess'])->name('shop.checkout.success');
-    Route::get('/shop/{slug}/cancel', [App\Http\Controllers\ShopController::class, 'checkoutCancel'])->name('shop.checkout.cancel');
-    Route::get('/purchase/{purchase}/download', [App\Http\Controllers\ShopController::class, 'download'])->name('purchase.download');
-});
 
 Route::middleware(['module:module_shop'])->group(function () {
     Route::get('/shop', [App\Http\Controllers\ShopController::class, 'index'])->name('shop.index');
@@ -112,8 +96,6 @@ Route::middleware(['auth', 'verified', 'module:module_shop'])->group(function ()
     Route::get('/purchase/{purchase}/download', [App\Http\Controllers\ShopController::class, 'download'])->name('purchase.download');
 });
 
-
-
 Route::middleware(['auth', 'verified', 'client'])
     ->controller(\App\Http\Controllers\SubscriptionController::class)
     ->group(function () {
@@ -123,3 +105,12 @@ Route::middleware(['auth', 'verified', 'client'])
     });
 
 require __DIR__.'/auth.php';
+
+Route::get('/testimonials', [App\Http\Controllers\TestimonialController::class, 'index'])->name('testimonials');
+Route::post('/publications/{publication}/comments', [CommentController::class, 'store'])->name('comments.store')->middleware(['auth', 'verified']);
+
+Route::prefix('polls')->name('polls.')->group(function () {
+    Route::get('/', [PollController::class, 'index'])->name('index');
+    Route::get('/{id}', [PollController::class, 'show'])->name('show');
+    Route::post('/{id}/vote', [PollController::class, 'vote'])->name('vote');
+});
