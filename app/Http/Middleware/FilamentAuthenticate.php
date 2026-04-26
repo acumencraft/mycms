@@ -7,6 +7,6 @@ class FilamentAuthenticate extends FilamentAuth
 {
     protected function redirectTo($request): ?string
     {
-        return route('login');
+        return url('/login');
     }
 }
