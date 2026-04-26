@@ -211,8 +211,7 @@
 </div>
 
     {{-- Subscription --}}
-    @if(isset($subscription))
-    @if(;subscription)
+    @if(!$subscription)
     <div class="mt-6 bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex items-center justify-between">
       <div>
         <h2 class="text-base font-semibold text-gray-900">Support Subscription</h2>
@@ -237,7 +236,8 @@
 </div>
 @endif
 
-<div class="mt-6">
+@if($subscription)
+    <div class="mt-6 bg-white rounded-xl border border-gray-100 shadow-sm">
       <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
         <h2 class="text-base font-semibold text-gray-900">My Subscription</h2>
         <span class="text-xs px-2 py-1 rounded-full font-medium {{ $subscription->status === 'active' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
