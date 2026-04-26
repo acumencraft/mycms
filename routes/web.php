@@ -112,29 +112,7 @@ Route::middleware(['auth', 'verified', 'module:module_shop'])->group(function ()
     Route::get('/purchase/{purchase}/download', [App\Http\Controllers\ShopController::class, 'download'])->name('purchase.download');
 });
 
-Route::get('/admin-test', function () {
-    if (!auth()->check()) {
-        return 'Not logged in';
-    }
-    $user = auth()->user();
-    return [
-        'id' => $user->id,
-        'email' => $user->email,
-        'roles' => $user->getRoleNames(),
-        'status' => $user->status,
-        'canAccess' => $user->canAccessPanel(app(\Filament\Panel::class)),
-    ];
-})->middleware('auth');
 
-require __DIR__.'/auth.php';
-Route::get('/testimonials', [App\Http\Controllers\TestimonialController::class, 'index'])->name('testimonials');
-Route::post('/publications/{publication}/comments', [CommentController::class, 'store'])->name('comments.store')->middleware(['auth', 'verified']);
-
-Route::prefix('polls')->name('polls.')->group(function () {
-    Route::get('/', [PollController::class, 'index'])->name('index');
-    Route::get('/{id}', [PollController::class, 'show'])->name('show');
-    Route::post('/{id}/vote', [PollController::class, 'vote'])->name('vote');
-});
 
 Route::middleware(['auth', 'verified', 'client'])->group(function () {
     Route::get('/subscribe', function () {
