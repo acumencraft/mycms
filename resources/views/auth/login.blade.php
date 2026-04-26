@@ -65,7 +65,7 @@
     </div>
 
     <div>
-        <button type="submit"
+        <button type="submit" onclick="this.disabled=true;this.form.submit()"
                 class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
             Sign in
         </button>

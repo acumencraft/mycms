@@ -48,7 +48,7 @@
                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
     </div>
 
-    <button type="submit"
+    <button type="submit" onclick="this.disabled=true;this.form.submit()"
             class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-colors">
         Create account
     </button>

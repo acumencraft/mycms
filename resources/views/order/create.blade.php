@@ -68,7 +68,7 @@
               </label>
               <a href="{{ route('password.request') }}" class="text-sm text-primary hover:text-primary/80">Forgot password?</a>
             </div>
-            <button type="submit"
+            <button type="submit" onclick="this.disabled=true;this.form.submit()"
               class="w-full inline-flex justify-center items-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium h-10 px-4">
               Sign In & Continue
             </button>
@@ -111,7 +111,7 @@
                   class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-gray-900">
               </div>
             </div>
-            <button type="submit"
+            <button type="submit" onclick="this.disabled=true;this.form.submit()"
               class="w-full inline-flex justify-center items-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium h-10 px-4">
               Create Account & Continue
             </button>
@@ -382,7 +382,7 @@
                     class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-gray-900">{{ old('additional_requirements') }}</textarea>
         </div>
 
-        <button type="submit"
+        <button type="submit" onclick="this.disabled=true;this.form.submit()"
           class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium h-10 px-4 py-2 w-full">
           Submit Order Request
         </button>
