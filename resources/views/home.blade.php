@@ -37,6 +37,7 @@
 </section>
 
 
+@if(($modules["module_portfolio"] ?? true) && $modules["module_portfolio"] !== "0")
 <!-- Portfolio Section -->
 <section class="py-24 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4">
@@ -120,6 +121,9 @@
 </section>
 
 
+@endif
+
+@if(($modules["module_services"] ?? true) && $modules["module_services"] !== "0")
 <!-- Services Section -->
 <section class="py-24 bg-white">
     <div class="max-w-7xl mx-auto px-4">
@@ -187,6 +191,8 @@
 </section>
 
 
+@endif
+
 <!-- Features Section -->
 <section class="py-24 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4">
@@ -224,6 +230,7 @@
 </section>
 
 
+@if(($modules["module_testimonials"] ?? true) && $modules["module_testimonials"] !== "0")
 <!-- Testimonials -->
 <section class="py-24 bg-white">
     <div class="max-w-7xl mx-auto px-4">
@@ -270,4 +277,5 @@
     </div>
 </section>
 
+@endif
 @endsection

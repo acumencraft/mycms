@@ -8,6 +8,7 @@ use App\Models\Testimonial;
 use App\Models\Page;
 use App\Models\Feature;
 use Illuminate\Support\Facades\Cache;
+use App\Models\SiteSetting;
 
 class HomeController extends Controller
 {
@@ -41,13 +42,15 @@ class HomeController extends Controller
             return Page::where('slug', 'home')->first();
         });
 
+        $modules = Cache::remember('site.settings', 3600, fn() => SiteSetting::pluck('value', 'key')->toArray());
         return view('home', compact(
             'featuredServices',
             'featuredProjects',
             'latestPublications',
             'testimonials',
             'homePage',
-            'features'
+            'features',
+            'modules'
         ));
     }
 }
