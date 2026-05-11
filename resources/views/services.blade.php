@@ -9,10 +9,10 @@
     {{-- Header --}}
     <div class="text-center mb-20">
       <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4" style="letter-spacing:-0.02em;">
-        {{ optional($page)->hero_title ?? data_get($siteSettings, 'module_services_label', 'Our Services') }}
+        {{ optional($page)->page_title ?? optional($page)->hero_title ?? 'Our Services' }}
       </h1>
       <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-        {{ optional($page)->hero_subtitle ?? 'Comprehensive solutions to bring your digital vision to life' }}
+        {{ optional($page)->page_subtitle ?? optional($page)->hero_subtitle ?? 'Comprehensive solutions to bring your digital vision to life' }}
       </p>
     </div>
 

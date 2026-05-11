@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DigitalProduct;
+use App\Models\Page;
 use App\Models\DigitalProductVersion;
 use App\Models\Purchase;
 use App\Mail\PurchaseConfirmationMail;
@@ -24,14 +25,16 @@ class ShopController extends Controller
             $query->where('name', 'like', '%'.$request->search.'%');
         }
 
-        $products = $query->latest()->paginate(12);
+        $page = Page::where('slug', 'shop')->first();
+        $products = $query->latest()->paginate($page->items_count ?? 12);
 
         $categories = DigitalProduct::where('is_published', true)
             ->select('category')
             ->distinct()
             ->pluck('category');
 
-        return view('shop.index', compact('products', 'categories'));
+        $page = Page::where('slug', 'shop')->first();
+        return view('shop.index', compact('products', 'categories', 'page'));
     }
 
     public function show(string $slug)
@@ -48,7 +51,8 @@ class ShopController extends Controller
             })->where('user_id', auth()->id())->exists();
         }
 
-        return view('shop.show', compact('product', 'hasPurchased'));
+        $page = \App\Models\Page::where('slug', 'shop')->first();
+        return view('shop.show', compact('product', 'hasPurchased', 'page'));
     }
 
 public function download(Purchase $purchase)

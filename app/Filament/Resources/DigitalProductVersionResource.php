@@ -19,7 +19,7 @@ class DigitalProductVersionResource extends Resource
     public static function getNavigationGroup(): ?string { return 'Content'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-document-duplicate';
     protected static ?string $navigationLabel = 'Product Versions';
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 7;
 
     public static function canViewAny(): bool
     {

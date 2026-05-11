@@ -17,7 +17,7 @@ class FeatureResource extends Resource
     public static function getNavigationGroup(): ?string { return 'Content'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-star';
     protected static ?string $navigationLabel = 'Features';
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 5;
 
     public static function canViewAny(): bool
     {

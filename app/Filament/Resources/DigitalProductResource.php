@@ -19,7 +19,7 @@ class DigitalProductResource extends Resource
     public static function getNavigationGroup(): ?string { return 'Content'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-cube';
     protected static ?string $navigationLabel = 'Digital Products';
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 6;
 
     public static function canViewAny(): bool
     {

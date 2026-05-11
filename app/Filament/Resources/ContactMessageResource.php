@@ -17,7 +17,7 @@ class ContactMessageResource extends Resource
     public static function getNavigationGroup(): ?string { return 'Operations'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
     protected static ?string $navigationLabel = 'Messages';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 6;
 
     public static function canViewAny(): bool
     {

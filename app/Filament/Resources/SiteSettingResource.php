@@ -16,7 +16,7 @@ class SiteSettingResource extends Resource
     protected static ?string $model = SiteSetting::class;
     public static function getNavigationGroup(): ?string { return 'System'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-cog';
-    protected static ?int $navigationSort = 16;
+    protected static ?int $navigationSort = 5;
 
     public static function canViewAny(): bool
     {

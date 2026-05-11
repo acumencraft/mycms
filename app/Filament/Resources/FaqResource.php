@@ -17,7 +17,7 @@ class FaqResource extends Resource
     public static function getNavigationGroup(): ?string { return 'Content'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-question-mark-circle';
     protected static ?string $navigationLabel = 'FAQ';
-    protected static ?int $navigationSort = 11;
+    protected static ?int $navigationSort = 9;
 
     public static function canViewAny(): bool
     {

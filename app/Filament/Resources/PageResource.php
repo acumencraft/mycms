@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PageResource\Pages;
@@ -17,96 +16,129 @@ class PageResource extends Resource
     protected static ?string $model = Page::class;
     public static function getNavigationGroup(): ?string { return 'System'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-document-text';
-    protected static ?int $navigationSort = 15;
+    protected static ?int $navigationSort = 4;
+    protected static ?string $navigationLabel = 'Pages';
 
     public static function canViewAny(): bool
     {
         return auth()->user()?->hasRole('Super Admin');
     }
-    protected static ?string $navigationLabel = 'Pages';
 
     public static function form(Schema $schema): Schema
     {
         $record = $schema->getRecord();
         $slug = $record?->slug;
 
+        $modulePages = ['blog', 'portfolio', 'services', 'guides', 'shop'];
+        $contentPages = ['about', 'contact', 'privacy-policy', 'terms'];
+        $isModule = in_array($slug, $modulePages);
+        $isContent = in_array($slug, $contentPages);
+        $isHome = $slug === 'home';
         $isContact = $slug === 'contact';
 
-        $baseFields = [
-            Section::make('General')
-                ->columnSpanFull()
-                ->schema([
-                    Forms\Components\TextInput::make('title')
-                        ->required()
-                        ->maxLength(255),
-                    Forms\Components\TextInput::make('slug')
-                        ->required()
-                        ->unique(ignoreRecord: true)
-                        ->maxLength(255)
-                        ->disabled(fn ($record) => in_array($record?->slug, ['about', 'contact'])),
-                    Forms\Components\Select::make('status')
-                        ->options(['draft' => 'Draft', 'published' => 'Published'])
-                        ->default('published')
-                        ->required(),
-                ])->columns(3),
-            Section::make('SEO')
-                ->columnSpanFull()
-                ->schema([
-                    Forms\Components\TextInput::make('seo_title')->maxLength(255),
-                    Forms\Components\Textarea::make('seo_description')->maxLength(500)->rows(2),
-                ])->columns(2)->collapsed(),
+        $sections = [];
+
+        // General
+        $sections[] = Section::make('General')
+            ->columnSpanFull()
+            ->schema([
+                Forms\Components\TextInput::make('title')
+                    ->label('Admin Label')
+                    ->helperText('მხოლოდ admin მენიუში ჩანს')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('slug')
+                    ->required()
+                    ->unique(ignoreRecord: true)
+                    ->maxLength(255)
+                    ->disabled(fn ($record) => $record?->slug !== null),
+                Forms\Components\Select::make('status')
+                    ->options(['draft' => 'Draft', 'published' => 'Published'])
+                    ->default('published')
+                    ->required(),
+            ])->columns(3);
+
+        // SEO
+        $sections[] = Section::make('SEO')
+            ->columnSpanFull()
+            ->schema([
+                Forms\Components\TextInput::make('seo_title')->maxLength(255),
+                Forms\Components\Textarea::make('seo_description')->maxLength(500)->rows(2),
+            ])->columns(2)->collapsed();
+
+        // Page Heading — ყველა გვერდზე
+        $headingSchema = [
+            Forms\Components\TextInput::make('page_title')
+                ->label('Page Title')
+                ->helperText('გვერდზე ჩასაჩვენებელი სათაური (h1)')
+                ->maxLength(255),
+            Forms\Components\Textarea::make('page_subtitle')
+                ->label('Page Subtitle')
+                ->helperText('გვერდის ქვესათაური')
+                ->rows(2)
+                ->maxLength(500),
         ];
 
-        if ($isContact) {
-            return $schema->schema(array_merge($baseFields, [
-                Section::make('Contact Information')
-                    ->columnSpanFull()
-                    ->schema([
-                        Forms\Components\TextInput::make('contact_phone')
-                            ->label('Phone')->maxLength(255),
-                        Forms\Components\TextInput::make('contact_email')
-                            ->label('Email')->email()->maxLength(255),
-                        Forms\Components\TextInput::make('working_hours')
-                            ->label('Working Hours')->maxLength(255)
-                            ->placeholder('Mon-Fri: 9:00-18:00'),
-                        Forms\Components\Textarea::make('contact_address')
-                            ->label('Address')->rows(2)->maxLength(500),
-                    ])->columns(2),
-                Section::make('Google Maps')
-                    ->columnSpanFull()
-                    ->schema([
-                        Forms\Components\Textarea::make('google_maps_embed')
-                            ->label('Google Maps Embed Code')
-                            ->rows(4)
-                            ->placeholder('<iframe src="https://www.google.com/maps/embed?..." ...></iframe>')
-                            ->helperText('Google Maps → Share → Embed a map → კოდი აქ ჩასვი')
-                    ]),
-                Section::make('Page Content')
-                    ->columnSpanFull()
-                    ->schema([
-                        Forms\Components\RichEditor::make('content')
-                            ->label('Additional Content (optional)'),
-                    ])->collapsed(),
-            ]));
+        if ($isModule) {
+            $headingSchema[] = Forms\Components\TextInput::make('items_count')
+                ->label('Items to Show')
+                ->helperText('რამდენი ელემენტი გამოჩნდეს გვერდზე')
+                ->numeric()
+                ->default(9)
+                ->minValue(1)
+                ->maxValue(50);
         }
 
-        return $schema->schema(array_merge($baseFields, [
-            Section::make('Content')
+        $sections[] = Section::make('Page Heading')
+            ->columnSpanFull()
+            ->description('სათაური და ქვესათაური რომელიც გვერდზე ჩანს')
+            ->schema($headingSchema)
+            ->columns(2);
+
+        // Content — content pages + home
+        if ($isContent || $isHome || !$isModule) {
+            $sections[] = Section::make('Content')
                 ->columnSpanFull()
                 ->schema([
-                    Forms\Components\RichEditor::make('content')
-                        ->required(),
-                ]),
-            Section::make('Hero Section')
+                    Forms\Components\RichEditor::make('content'),
+                ]);
+        }
+
+        // Contact fields
+        if ($isContact) {
+            $sections[] = Section::make('Contact Information')
                 ->columnSpanFull()
                 ->schema([
-                    Forms\Components\TextInput::make('hero_title')->maxLength(255),
-                    Forms\Components\Textarea::make('hero_subtitle')->rows(2)->maxLength(500),
-                    Forms\Components\FileUpload::make('hero_image')->image()->directory('pages'),
+                    Forms\Components\TextInput::make('contact_phone')->label('Phone')->maxLength(255),
+                    Forms\Components\TextInput::make('contact_email')->label('Email')->email()->maxLength(255),
+                    Forms\Components\TextInput::make('working_hours')->label('Working Hours')->maxLength(255),
+                    Forms\Components\Textarea::make('contact_address')->label('Address')->rows(2)->maxLength(500),
+                ])->columns(2);
+
+            $sections[] = Section::make('Google Maps')
+                ->columnSpanFull()
+                ->schema([
+                    Forms\Components\Textarea::make('google_maps_embed')
+                        ->label('Google Maps Embed Code')
+                        ->rows(4)
+                        ->placeholder('<iframe src="https://www.google.com/maps/embed?..." ...></iframe>'),
+                ]);
+        }
+
+        // Hero Section — მხოლოდ home
+        if ($isHome) {
+            $sections[] = Section::make('Hero Section')
+                ->columnSpanFull()
+                ->schema([
+                    Forms\Components\TextInput::make('hero_title')->maxLength(255)->columnSpanFull(),
+                    Forms\Components\Textarea::make('hero_subtitle')->rows(2)->maxLength(500)->columnSpanFull(),
+                    Forms\Components\FileUpload::make('hero_image')->image()->directory('pages')->columnSpanFull(),
                     Forms\Components\TextInput::make('hero_button_text')->maxLength(255),
                     Forms\Components\TextInput::make('hero_button_url')->maxLength(255),
-                ])->columns(2)->collapsed(),
-        ]));
+                ])->columns(2)->collapsed();
+        }
+
+        return $schema->schema($sections);
     }
 
     public static function table(Table $table): Table
@@ -115,6 +147,7 @@ class PageResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')->searchable(),
                 Tables\Columns\TextColumn::make('slug')->badge()->color('gray'),
+                Tables\Columns\TextColumn::make('page_title')->label('Page Title')->searchable(),
                 Tables\Columns\TextColumn::make('status')->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'published' => 'success',

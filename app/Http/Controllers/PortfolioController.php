@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\PortfolioProject;
+use App\Models\Page;
 use Illuminate\Http\Request;
 
 class PortfolioController extends Controller
 {
     public function index()
     {
-        $projects = PortfolioProject::with('images')->orderBy('completed_at', 'desc')->get();
         $page = \App\Models\Page::where('slug', 'portfolio')->first();
+        $projects = PortfolioProject::with('images')->orderBy('completed_at', 'desc')->paginate($page->items_count ?? 9);
 
         return view('portfolio', compact('projects', 'page'));
     }
@@ -18,6 +19,6 @@ class PortfolioController extends Controller
     public function show($id)
     {
         $project = PortfolioProject::with('images')->findOrFail($id);
-        return view('portfolio.show', compact('project'));
+        return view('portfolio.show', compact('project', 'page'));
     }
 }

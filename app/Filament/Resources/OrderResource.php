@@ -17,7 +17,7 @@ class OrderResource extends Resource
     protected static ?string $model = Order::class;
     public static function getNavigationGroup(): ?string { return 'Operations'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-shopping-bag';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
     public static function canViewAny(): bool
     {

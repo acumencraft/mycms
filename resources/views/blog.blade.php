@@ -8,10 +8,10 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-16">
       <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4" style="letter-spacing: -0.02em;">
-        {{ optional($page)->hero_title ?? data_get($siteSettings, 'module_blog_label', 'Blog') }}
+        {{ optional($page)->page_title ?? optional($page)->hero_title ?? 'Blog' }}
       </h1>
       <p class="text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
-        {{ optional($page)->hero_subtitle ?? 'Insights, tips, and latest news from the world of web development.' }}
+        {{ optional($page)->page_subtitle ?? optional($page)->hero_subtitle ?? 'Insights, tips, and latest news from the world of web development.' }}
       </p>
     </div>
 

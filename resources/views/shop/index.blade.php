@@ -10,10 +10,10 @@
     {{-- Header --}}
     <div class="text-center mb-16">
       <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4" style="letter-spacing: -0.02em;">
-        Digital Shop
+        {{ $page?->page_title ?? "Digital Shop" }}
       </h1>
       <p class="text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
-        Premium digital products for your projects.
+        {{ $page?->page_subtitle ?? "Premium digital products for your projects." }}
       </p>
     </div>
 

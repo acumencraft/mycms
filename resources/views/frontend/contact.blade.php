@@ -10,11 +10,13 @@
     {{-- Header --}}
     <div class="text-center mb-12">
       <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4" style="letter-spacing: -0.02em;">
-        {{ $page?->title ?? 'Contact Us' }}
+        {{ $page?->page_title ?? $page?->title ?? 'Contact Us' }}
       </h1>
+      @if($page?->page_subtitle)
       <p class="text-xl text-gray-600 leading-relaxed">
-        Get in touch with our team
+        {{ $page->page_subtitle }}
       </p>
+      @endif
     </div>
 
     {{-- Contact Info Cards --}}

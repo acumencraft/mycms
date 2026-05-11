@@ -14,7 +14,7 @@ class ProjectResource extends Resource
     protected static ?string $model = Project::class;
     public static function getNavigationGroup(): ?string { return 'Operations'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-folder';
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 3;
 
     public static function canViewAny(): bool
     {

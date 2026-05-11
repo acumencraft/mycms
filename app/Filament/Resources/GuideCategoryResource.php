@@ -17,7 +17,7 @@ class GuideCategoryResource extends Resource
     public static function getNavigationGroup(): ?string { return 'Content'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-tag';
     protected static ?string $navigationLabel = 'Guide Categories';
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 4;
 
     public static function canViewAny(): bool
     {

@@ -8,10 +8,10 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
             <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4" style="letter-spacing: -0.02em;">
-                {{ optional($page)->hero_title ?? 'About Us' }}
+                {{ optional($page)->page_title ?? optional($page)->hero_title ?? 'About Us' }}
             </h1>
             <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                {{ optional($page)->hero_subtitle ?? 'Learn more about our mission, values, and the team behind ' . config('agency.name') . '.' }}
+                {{ optional($page)->page_subtitle ?? optional($page)->hero_subtitle ?? 'Learn more about our mission, values, and the team behind ' . config('agency.name') . '.' }}
             </p>
         </div>
 

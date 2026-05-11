@@ -17,7 +17,7 @@ class MenuItemResource extends Resource
     public static function getNavigationGroup(): ?string { return 'System'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-bars-3';
     protected static ?string $navigationLabel = 'Menu Items';
-    protected static ?int $navigationSort = 14;
+    protected static ?int $navigationSort = 3;
 
     public static function canViewAny(): bool
     {

@@ -22,7 +22,7 @@ class NewsletterSubscriberResource extends Resource
 {
     protected static ?string $model = NewsletterSubscriber::class;
     protected static ?string $navigationLabel = 'Newsletter';
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 7;
 
     public static function canViewAny(): bool
     {

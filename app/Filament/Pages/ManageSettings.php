@@ -22,7 +22,8 @@ class ManageSettings extends Page implements HasForms
     }
     protected static ?string $navigationLabel = 'Settings';
     protected static ?string $title = 'Site Settings';
-    protected static ?int $navigationSort = 17;
+    protected static ?int $navigationSort = 6;
+    public static function getNavigationGroup(): ?string { return 'System'; }
 
     public function getView(): string
     {

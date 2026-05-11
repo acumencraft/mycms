@@ -17,7 +17,7 @@ class TestimonialResource extends Resource
     public static function getNavigationGroup(): ?string { return 'Content'; }
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-chat-bubble-oval-left';
     protected static ?string $navigationLabel = 'Testimonials';
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 8;
 
     public static function canViewAny(): bool
     {

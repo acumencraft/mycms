@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
+use App\Models\Page;
 use App\Models\Order;
 use App\Models\Publication;
 use App\Models\Service;
@@ -34,6 +35,38 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Order::observe(OrderObserver::class);
+
+        \Illuminate\Support\Facades\View::composer('*', function ($view) {
+            if (!request()->route()) return;
+            $slug = request()->route()->getName();
+            $slugMap = [
+                'about' => 'about',
+                'contact' => 'contact',
+                'blog' => 'blog',
+                'blog.show' => 'blog',
+                'portfolio' => 'portfolio',
+                'services' => 'services',
+                'guides' => 'guides',
+                'guides.show' => 'guides',
+                'shop.index' => 'shop',
+                'shop.show' => 'shop',
+                'testimonials' => 'testimonials',
+                'faq' => 'faq',
+                'privacy-policy' => 'privacy-policy',
+                'terms' => 'terms',
+                'page.show' => request()->route('slug'),
+            ];
+            if (isset($slugMap[$slug])) {
+                $pageSlug = $slugMap[$slug];
+                if (!$view->offsetExists('page') || is_null($view->offsetGet('page'))) {
+                    $page = \Illuminate\Support\Facades\Cache::remember(
+                        'page.' . $pageSlug, 3600,
+                        fn() => Page::where('slug', $pageSlug)->first()
+                    );
+                    $view->with('page', $page);
+                }
+            }
+        });
         Publication::observe(PublicationObserver::class);
         PortfolioProject::observe(PortfolioProjectObserver::class);
         Guide::observe(GuideObserver::class);
@@ -49,6 +82,7 @@ class AppServiceProvider extends ServiceProvider
         SiteSetting::saved(fn() => Cache::forget('site.settings'));
         MenuItem::saved(fn() => Cache::forget('menu.items'));
         MenuItem::deleted(fn() => Cache::forget('menu.items'));
+        Page::saved(function($page) { Cache::forget('page.' . $page->slug); });
 
         Event::listen(Login::class, LogSuccessfulLogin::class);
 
@@ -59,7 +93,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Filament admin routes-ზე composer არ გაეშვება
-        View::composer('*', function ($view) {
+        \Illuminate\Support\Facades\View::composer('*', function ($view) {
             if (Request::is('admin*')) {
                 return;
             }

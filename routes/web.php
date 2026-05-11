@@ -106,6 +106,11 @@ Route::middleware(['auth', 'verified', 'client'])
 
 require __DIR__.'/auth.php';
 
+// Dynamic CMS pages - must be last
+Route::get('/{slug}', [App\Http\Controllers\PageController::class, 'show'])
+    ->name('page.dynamic')
+    ->where('slug', '[a-z0-9-]+');
+
 Route::get('/testimonials', [App\Http\Controllers\TestimonialController::class, 'index'])->name('testimonials');
 Route::post('/publications/{publication}/comments', [CommentController::class, 'store'])->name('comments.store')->middleware(['auth', 'verified']);
 

@@ -10,10 +10,10 @@
     {{-- Header --}}
     <div class="text-center mb-12">
       <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4" style="letter-spacing: -0.02em;">
-        {{ $page?->hero_title ?? 'About Us' }}
+        {{ $page?->page_title ?? $page?->hero_title ?? 'About Us' }}
       </h1>
       <p class="text-xl text-gray-600 leading-relaxed">
-        {{ $page?->hero_subtitle ?? config('agency.full_name') . ' — Learn more about us' }}
+        {{ $page?->page_subtitle ?? $page?->hero_subtitle ?? config('agency.full_name') . ' — Learn more about us' }}
       </p>
       @if($page?->hero_button_text && $page?->hero_button_url)
         <a href="{{ $page->hero_button_url }}"

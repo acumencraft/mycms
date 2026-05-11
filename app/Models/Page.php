@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Page extends Model
 {
     protected $fillable = [
-        'title', 'slug', 'content', 'seo_title', 'seo_description', 'status',
+        'title', 'slug', 'content', 'page_title', 'page_subtitle', 'items_count', 'seo_title', 'seo_description', 'status',
         'hero_title', 'hero_subtitle', 'hero_image', 'hero_button_text', 'hero_button_url',
         'portfolio_title', 'portfolio_subtitle', 'services_title', 'services_subtitle',
         'features_title', 'features_subtitle', 'testimonials_title',
@@ -16,5 +16,6 @@ class Page extends Model
 
     protected $casts = [
         'status' => 'string',
+        'items_count' => 'integer',
     ];
 }

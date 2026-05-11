@@ -1,17 +1,22 @@
 <?php
 namespace App\Http\Controllers;
 use App\Models\Publication;
+use App\Models\Page;
 use Illuminate\Http\Request;
 
 class PublicationController extends Controller
 {
     public function index()
     {
+        $page = \App\Models\Page::where('slug', 'blog')->first();
         $publications = Publication::with('author')
             ->where('is_published', true)
             ->orderBy('published_at', 'desc')
-            ->paginate(10);
-        $page = \App\Models\Page::where('slug', 'blog')->first();
+            ->paginate($page->items_count ?? 10);
+        $publications = Publication::with('author')
+            ->where('is_published', true)
+            ->orderBy('published_at', 'desc')
+            ->paginate($page->items_count ?? 10);
         return view('blog', compact('publications', 'page'));
     }
 
@@ -27,7 +32,7 @@ class PublicationController extends Controller
             ->where('slug', $slug)
             ->where('is_published', true)
             ->firstOrFail();
-
-        return view('blog.show', compact('publication'));
+        $page = \App\Models\Page::where('slug', 'blog')->first();
+        return view('blog.show', compact('publication', 'page'));
     }
 }
