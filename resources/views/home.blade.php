@@ -37,7 +37,17 @@
 </section>
 
 
-@if(($modules["module_portfolio"] ?? true) && $modules["module_portfolio"] !== "0")
+
+@php
+$sectionOrder = $homePage->section_order ?? [];
+$defaultOrder = ["portfolio" => 1, "services" => 2, "features" => 3, "testimonials" => 4, "blog" => 5];
+$order = array_merge($defaultOrder, $sectionOrder);
+asort($order);
+@endphp
+
+@foreach(array_keys($order) as $section)
+    @if($section === "portfolio")
+@if(($modules["module_portfolio"] ?? true) && $modules["module_portfolio"] !== "0" && ($homePage->show_portfolio ?? true))
 <!-- Portfolio Section -->
 <section class="py-24 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4">
@@ -123,7 +133,8 @@
 
 @endif
 
-@if(($modules["module_services"] ?? true) && $modules["module_services"] !== "0")
+    @elseif($section === "services")
+@if(($modules["module_services"] ?? true) && $modules["module_services"] !== "0" && ($homePage->show_services ?? true))
 <!-- Services Section -->
 <section class="py-24 bg-white">
     <div class="max-w-7xl mx-auto px-4">
@@ -193,10 +204,12 @@
 
 @endif
 
+    @elseif($section === "features")
+
+@if($homePage->show_features ?? true)
 <!-- Features Section -->
 <section class="py-24 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4">
-
         <div class="text-center mb-16">
             <h2 class="text-4xl font-bold text-gray-900 mb-4">
                 {{ $homePage->features_title ?? 'Why Choose Us' }}
@@ -205,32 +218,26 @@
                 {{ $homePage->features_subtitle ?? 'What sets us apart from the competition' }}
             </p>
         </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-
             @foreach($features as $feature)
             <div class="text-center">
                 <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
                     <i class="fas fa-{{ $feature->icon ?? 'star' }} text-white text-2xl"></i>
                 </div>
-
                 <h3 class="text-lg font-semibold text-gray-900 mb-2">
                     {{ $feature->name }}
                 </h3>
-
                 <p class="text-gray-600 text-sm">
                     {{ $feature->description }}
                 </p>
             </div>
             @endforeach
-
         </div>
-
     </div>
 </section>
-
-
-@if(($modules["module_testimonials"] ?? true) && $modules["module_testimonials"] !== "0")
+@endif
+    @elseif($section === "testimonials")
+@if(($modules["module_testimonials"] ?? true) && $modules["module_testimonials"] !== "0" && ($homePage->show_testimonials ?? true))
 <!-- Testimonials -->
 <section class="py-24 bg-white">
     <div class="max-w-7xl mx-auto px-4">
@@ -238,7 +245,7 @@
             <h2 class="text-4xl font-bold text-gray-900 mb-3" style="letter-spacing:-0.02em">
                 {{ $homePage->testimonials_title ?? 'What our clients say' }}
             </h2>
-            <p class="text-gray-500">Real feedback from businesses we've helped grow</p>
+            <p class="text-gray-500">{{ $homePage->testimonials_subtitle ?? "Real feedback from businesses we've helped grow" }}</p>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6">
@@ -278,4 +285,41 @@
 </section>
 
 @endif
+
+    @elseif($section === "blog")
+@if(($modules["module_blog"] ?? true) && $modules["module_blog"] !== "0" && ($homePage->show_blog ?? false))
+<!-- Blog Section -->
+<section class="py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4" style="letter-spacing:-0.02em">
+                {{ $homePage->blog_title ?? 'Latest News' }}
+            </h2>
+            <p class="text-xl text-gray-600">
+                {{ $homePage->blog_subtitle ?? 'Insights and updates from our team' }}
+            </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            @foreach($latestPublications as $publication)
+            <a href="{{ route('blog.show', $publication->slug) }}" class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+                @if($publication->cover_image)
+                <img src="{{ asset('storage/'.$publication->cover_image) }}" alt="{{ $publication->title }}" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
+                @endif
+                <div class="p-6">
+                    <p class="text-xs text-gray-400 mb-2">{{ $publication->published_at?->format('M d, Y') }}</p>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">
+                        {{ $publication->title }}
+                    </h3>
+                    <p class="text-gray-500 text-sm line-clamp-2">{{ Str::limit($publication->excerpt ?? $publication->content, 100) }}</p>
+                </div>
+            </a>
+            @endforeach
+        </div>
+
+    </div>
+</section>
+@endif
+
+    @endif
+@endforeach
 @endsection

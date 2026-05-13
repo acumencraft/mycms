@@ -125,6 +125,82 @@ class PageResource extends Resource
                 ]);
         }
 
+
+        // Frontpage Builder — მხოლოდ home
+        if ($isHome) {
+            $sections[] = Section::make('Frontpage Builder')
+                ->columnSpanFull()
+                ->description('მთავარ გვერდზე გამოსაჩენი სექციები')
+                ->schema([
+                    Forms\Components\Toggle::make('show_portfolio')
+                        ->label('Show Portfolio Section')
+                        ->default(true),
+                    Forms\Components\Toggle::make('show_services')
+                        ->label('Show Services Section')
+                        ->default(true),
+                    Forms\Components\Toggle::make('show_testimonials')
+                        ->label('Show Testimonials Section')
+                        ->default(true),
+                    Forms\Components\Toggle::make('show_features')
+                        ->label('Show Features Section')
+                        ->default(true),
+                    Forms\Components\Toggle::make('show_blog')
+                        ->label('Show Blog Section')
+                        ->default(false),
+                ])->columns(2)->collapsed();
+
+            $sections[] = Section::make('Features Section')
+                ->columnSpanFull()
+                ->schema([
+                    Forms\Components\TextInput::make('features_title')->label('Title')->maxLength(255),
+                    Forms\Components\Textarea::make('features_subtitle')->label('Subtitle')->rows(2)->maxLength(500),
+                    Forms\Components\TextInput::make('features_items_count')->label('Items to Show')->numeric()->default(4)->minValue(1)->maxValue(12),
+                ])->columns(3)->collapsed();
+
+            $sections[] = Section::make('Section Order')
+                ->columnSpanFull()
+                ->description('სექციების თანმიმდევრობა (1 = პირველი)')
+                ->schema([
+                    Forms\Components\TextInput::make('section_order.portfolio')->label('Portfolio')->numeric()->default(1)->minValue(1)->maxValue(6),
+                    Forms\Components\TextInput::make('section_order.services')->label('Services')->numeric()->default(2)->minValue(1)->maxValue(6),
+                    Forms\Components\TextInput::make('section_order.features')->label('Features')->numeric()->default(3)->minValue(1)->maxValue(6),
+                    Forms\Components\TextInput::make('section_order.testimonials')->label('Testimonials')->numeric()->default(4)->minValue(1)->maxValue(6),
+                    Forms\Components\TextInput::make('section_order.blog')->label('Blog')->numeric()->default(5)->minValue(1)->maxValue(6),
+                ])->columns(5)->collapsed();
+
+            $sections[] = Section::make('Portfolio Section')
+                ->columnSpanFull()
+                ->schema([
+                    Forms\Components\TextInput::make('portfolio_title')->label('Title')->maxLength(255),
+                    Forms\Components\Textarea::make('portfolio_subtitle')->label('Subtitle')->rows(2)->maxLength(500),
+                    Forms\Components\TextInput::make('portfolio_items_count')->label('Items to Show')->numeric()->default(6)->minValue(1)->maxValue(20),
+                ])->columns(3)->collapsed();
+
+            $sections[] = Section::make('Services Section')
+                ->columnSpanFull()
+                ->schema([
+                    Forms\Components\TextInput::make('services_title')->label('Title')->maxLength(255),
+                    Forms\Components\Textarea::make('services_subtitle')->label('Subtitle')->rows(2)->maxLength(500),
+                    Forms\Components\TextInput::make('services_items_count')->label('Items to Show')->numeric()->default(6)->minValue(1)->maxValue(20),
+                ])->columns(3)->collapsed();
+
+            $sections[] = Section::make('Testimonials Section')
+                ->columnSpanFull()
+                ->schema([
+                    Forms\Components\TextInput::make('testimonials_title')->label('Title')->maxLength(255),
+                    Forms\Components\Textarea::make('testimonials_subtitle')->label('Subtitle')->rows(2)->maxLength(500),
+                    Forms\Components\TextInput::make('testimonials_items_count')->label('Items to Show')->numeric()->default(3)->minValue(1)->maxValue(12),
+                ])->columns(2)->collapsed();
+
+            $sections[] = Section::make('Blog Section')
+                ->columnSpanFull()
+                ->schema([
+                    Forms\Components\TextInput::make('blog_title')->label('Title')->maxLength(255),
+                    Forms\Components\Textarea::make('blog_subtitle')->label('Subtitle')->rows(2)->maxLength(500),
+                    Forms\Components\TextInput::make('blog_items_count')->label('Items to Show')->numeric()->default(3)->minValue(1)->maxValue(9),
+                ])->columns(3)->collapsed();
+        }
+
         // Hero Section — მხოლოდ home
         if ($isHome) {
             $sections[] = Section::make('Hero Section')
@@ -132,7 +208,7 @@ class PageResource extends Resource
                 ->schema([
                     Forms\Components\TextInput::make('hero_title')->maxLength(255)->columnSpanFull(),
                     Forms\Components\Textarea::make('hero_subtitle')->rows(2)->maxLength(500)->columnSpanFull(),
-                    Forms\Components\FileUpload::make('hero_image')->image()->directory('pages')->columnSpanFull(),
+                    Forms\Components\FileUpload::make('hero_image')->image()->disk('public')->directory('pages')->columnSpanFull(),
                     Forms\Components\TextInput::make('hero_button_text')->maxLength(255),
                     Forms\Components\TextInput::make('hero_button_url')->maxLength(255),
                 ])->columns(2)->collapsed();

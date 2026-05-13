@@ -82,7 +82,23 @@ class AppServiceProvider extends ServiceProvider
         SiteSetting::saved(fn() => Cache::forget('site.settings'));
         MenuItem::saved(fn() => Cache::forget('menu.items'));
         MenuItem::deleted(fn() => Cache::forget('menu.items'));
-        Page::saved(function($page) { Cache::forget('page.' . $page->slug); });
+        Page::saved(function($page) {
+            Cache::forget('page.' . $page->slug);
+            if ($page->slug === 'home') {
+                Cache::forget('home.page');
+                Cache::forget('home.services');
+                Cache::forget('home.projects');
+                Cache::forget('home.publications');
+                Cache::forget('home.testimonials');
+                // items_count-based cache keys
+                foreach (range(1, 20) as $i) {
+                    Cache::forget('home.services.' . $i);
+                    Cache::forget('home.projects.' . $i);
+                    Cache::forget('home.publications.' . $i);
+                    Cache::forget('home.testimonials.' . $i);
+                }
+            }
+        });
 
         Event::listen(Login::class, LogSuccessfulLogin::class);
 
