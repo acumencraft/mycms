@@ -20,14 +20,14 @@ php artisan optimize:clear
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
-php artisan filament:optimize
+php artisan filament:assets
+cp -r public/css /home/u831949347/domains/archvadze.com/public_html/
+cp -r public/js /home/u831949347/domains/archvadze.com/public_html/
+cp -r public/fonts /home/u831949347/domains/archvadze.com/public_html/
 echo "=== Deploy Complete ==="
 ENDSSH
 
 echo "→ Copying built assets..."
 scp -i ~/.ssh/hostinger_archvadze -P 65002 -r public/build u831949347@82.25.96.134:domains/archvadze.com/public_html/
-
-echo "→ Copying Filament assets..."
-ssh -i ~/.ssh/hostinger_archvadze -p 65002 u831949347@82.25.96.134 "cp -r domains/archvadze.com/laravel/public/css domains/archvadze.com/public_html/ && cp -r domains/archvadze.com/laravel/public/js domains/archvadze.com/public_html/ && cp -r domains/archvadze.com/laravel/public/fonts domains/archvadze.com/public_html/"
 
 echo "=== All Done! ==="

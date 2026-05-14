@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Purchase;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class AnalyticsWidget extends ChartWidget
 {

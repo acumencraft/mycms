@@ -5,6 +5,7 @@ use App\Models\Order;
 use App\Models\Purchase;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class RevenueWidget extends ChartWidget
 {
@@ -17,16 +18,16 @@ class RevenueWidget extends ChartWidget
     {
         $months = collect(range(5, 0))->map(fn($i) => Carbon::now()->subMonths($i));
 
-        $orders = Order::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, SUM(price_estimate) as total")
+        $orders = Cache::remember('analytics.revenue.orders.6m', 3600, fn() => Order::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, SUM(price_estimate) as total")
             ->where('status', 'accepted')
             ->where('created_at', '>=', Carbon::now()->subMonths(6))
             ->groupBy('month')
-            ->pluck('total', 'month');
+            ->pluck('total', 'month'));
 
-        $purchases = Purchase::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, SUM(amount) as total")
+        $purchases = Cache::remember('analytics.revenue.purchases.6m', 3600, fn() => Purchase::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, SUM(amount) as total")
             ->where('created_at', '>=', Carbon::now()->subMonths(6))
             ->groupBy('month')
-            ->pluck('total', 'month');
+            ->pluck('total', 'month'));
 
         return [
             'datasets' => [

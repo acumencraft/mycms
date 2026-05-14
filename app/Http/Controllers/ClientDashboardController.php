@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Services\ClientService;
 use App\Models\ProjectMessage;
 use App\Models\ProjectFile;
 use Illuminate\Http\Request;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\Storage;
 
 class ClientDashboardController extends Controller
 {
+    public function __construct(private ClientService $clientService) {}
+
     private function getOrCreateClient()
     {
         $user = Auth::user();
@@ -31,7 +34,10 @@ public function index()
 {
     $client = $this->getOrCreateClient();
     $projects = $client->projects()
-        ->with(['messages' => fn($q) => $q->latest()->limit(3)])
+        ->with([
+            'messages' => fn($q) => $q->latest()->limit(3),
+            'order',
+        ])
         ->latest()
         ->get();
 
