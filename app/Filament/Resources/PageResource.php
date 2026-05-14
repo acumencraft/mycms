@@ -208,7 +208,26 @@ class PageResource extends Resource
                 ->schema([
                     Forms\Components\TextInput::make('hero_title')->maxLength(255)->columnSpanFull(),
                     Forms\Components\Textarea::make('hero_subtitle')->rows(2)->maxLength(500)->columnSpanFull(),
-                    Forms\Components\FileUpload::make('hero_image')->image()->disk('public')->directory('pages')->columnSpanFull(),
+                    Forms\Components\Select::make('hero_media_type')
+                        ->label('Media Type')
+                        ->options(['image' => 'Image', 'video' => 'Video'])
+                        ->default('image')
+                        ->reactive()
+                        ->columnSpanFull(),
+                    Forms\Components\FileUpload::make('hero_image')
+                        ->image()
+                        ->disk('public')
+                        ->directory('pages')
+                        ->label('Hero Image')
+                        ->columnSpanFull()
+                        ->hidden(fn($get) => $get('hero_media_type') === 'video'),
+                    Forms\Components\FileUpload::make('hero_video')
+                        ->disk('public')
+                        ->directory('pages/videos')
+                        ->label('Hero Video')
+                        ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/ogg'])
+                        ->columnSpanFull()
+                        ->hidden(fn($get) => $get('hero_media_type') !== 'video'),
                     Forms\Components\TextInput::make('hero_button_text')->maxLength(255),
                     Forms\Components\TextInput::make('hero_button_url')->maxLength(255),
                 ])->columns(2)->collapsed();

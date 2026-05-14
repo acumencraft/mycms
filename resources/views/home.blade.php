@@ -8,7 +8,16 @@
 <!-- Hero Section -->
 <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0 z-0">
-        @if($homePage && $homePage->hero_image)
+        @if($homePage && $homePage->hero_media_type === 'video' && $homePage->hero_video)
+            <video
+                autoplay
+                muted
+                loop
+                playsinline
+                class="w-full h-full object-cover">
+                <source src="{{ asset('storage/' . $homePage->hero_video) }}" type="video/mp4">
+            </video>
+        @elseif($homePage && $homePage->hero_image)
             <img
                 src="{{ asset('storage/' . $homePage->hero_image) }}"
                 alt="{{ $homePage->hero_title ?? 'Hero image' }}"

@@ -8,7 +8,7 @@ class Page extends Model
 {
     protected $fillable = [
         'title', 'slug', 'content', 'page_title', 'page_subtitle', 'items_count', 'seo_title', 'seo_description', 'status',
-        'hero_title', 'hero_subtitle', 'hero_image', 'hero_button_text', 'hero_button_url',
+        'hero_title', 'hero_subtitle', 'hero_image', 'hero_video', 'hero_media_type', 'hero_button_text', 'hero_button_url',
         'portfolio_title', 'portfolio_subtitle', 'services_title', 'services_subtitle',
         'features_title', 'features_subtitle', 'testimonials_title',
         'portfolio_items_count', 'services_items_count', 'features_items_count', 'testimonials_items_count',
