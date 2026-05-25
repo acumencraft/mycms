@@ -22,3 +22,9 @@ Artisan::command('archvadze:generate-demo-data', function () {
         $this->error('Demo data generation failed. See the output above for details.');
     }
 })->purpose('Generate demo/test data across the platform (services, projects, publications, etc.)');
+
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command('logs:clean')->monthly()
+    ->withoutOverlapping()
+    ->runInBackground();
